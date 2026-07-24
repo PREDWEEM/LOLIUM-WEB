@@ -1,203 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PREDWEEM: Modelo Predictivo de Emergencia y Fenología de Lolium multiflorum</title>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <style>
-        :root { --primary-green: #1a5f3f; }
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(180deg, #f8f9fa 0%, #f1f5f3 100%);
-            color: #222;
-        }
-        .header-title { font-family: 'Roboto', sans-serif; font-weight: 700; letter-spacing: -0.5px; }
-        #map {
-            height: 75vh; width: 100%; border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(26, 95, 63, 0.15);
-            margin-bottom: 2.5rem; border: 1px solid rgba(26, 95, 63, 0.1);
-        }
-        .leaflet-tooltip.city-label {
-            background-color: rgba(255,255,255,0.95) !important;
-            border: none !important; border-radius: 8px !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
-            color: #1a5f3f !important; font-weight: 600; font-size: 13.5px;
-            padding: 6px 14px; white-space: nowrap; opacity: 1; pointer-events: none;
-        }
-        .leaflet-popup-content { margin: 0; padding: 0; }
-        .leaflet-popup-content h5 { color: var(--primary-green); margin-bottom: 12px; font-weight: 600; }
-        .logo-img { max-width: 650px; width: 100%; height: auto; filter: drop-shadow(0 10px 20px rgba(26,95,63,.2)); }
-        .explanation-card, .acknowledgements-card {
-            border: none; border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(26,95,63,.1); background: white;
-        }
-        .step-card { transition: all .3s cubic-bezier(.4,0,.2,1); }
-        .step-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(26,95,63,.15); }
-        .section-header { position: relative; display: inline-block; }
-        .section-header::after {
-            content: ''; position: absolute; width: 60%; height: 4px;
-            background: linear-gradient(to right, #1a5f3f, #4ade80);
-            bottom: -6px; left: 0; border-radius: 4px;
-        }
-        .modern-divider {
-            height: 2px; background: linear-gradient(to right, transparent, #1a5f3f20, transparent);
-            margin: 2rem 0;
-        }
-        .ack-logo-grid { align-items: center; justify-content: center; }
-        .ack-logo-link {
-            display: flex; align-items: center; justify-content: center;
-            min-height: 190px; padding: 1.25rem;
-            border: 1px solid rgba(26,95,63,.10); border-radius: 16px;
-            background: #fff; transition: transform .25s ease, box-shadow .25s ease;
-        }
-        .ack-logo-link:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(26,95,63,.14); }
-        .ack-logo { width: 100%; max-width: 230px; max-height: 155px; object-fit: contain; }
-        .red-dima-logo { max-width: 420px; width: 100%; height: auto; filter: drop-shadow(0 8px 18px rgba(26,95,63,.14)); }
-        @media (max-width: 576px) {
-            .logo-img { max-width: 380px; }
-            #map { height: 65vh; }
-            .ack-logo-link { min-height: 155px; }
-            .ack-logo { max-height: 125px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREDWEEM: Modelo Predictivo de Emergencia y Fenología de Lolium multiflorum</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{--primary-green:#1a5f3f}body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:linear-gradient(180deg,#f8f9fa 0%,#f1f5f3 100%);color:#222}.header-title{font-family:'Roboto',sans-serif;font-weight:700;letter-spacing:-.5px}#map{height:75vh;width:100%;border-radius:20px;box-shadow:0 20px 40px rgba(26,95,63,.15);margin-bottom:2.5rem;border:1px solid rgba(26,95,63,.1)}.leaflet-tooltip.city-label{background-color:rgba(255,255,255,.95)!important;border:none!important;border-radius:8px!important;box-shadow:0 4px 15px rgba(0,0,0,.15)!important;color:#1a5f3f!important;font-weight:600;font-size:13.5px;padding:6px 14px;white-space:nowrap;opacity:1;pointer-events:none}.leaflet-popup-content{margin:0;padding:0}.leaflet-popup-content h5{color:var(--primary-green);margin-bottom:12px;font-weight:600}.logo-img{max-width:650px;width:100%;height:auto;filter:drop-shadow(0 10px 20px rgba(26,95,63,.2))}.explanation-card,.acknowledgements-card{border:none;border-radius:20px;box-shadow:0 15px 35px rgba(26,95,63,.1);background:#fff}.step-card{transition:all .3s cubic-bezier(.4,0,.2,1)}.step-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(26,95,63,.15)}.section-header{position:relative;display:inline-block}.section-header:after{content:'';position:absolute;width:60%;height:4px;background:linear-gradient(to right,#1a5f3f,#4ade80);bottom:-6px;left:0;border-radius:4px}.modern-divider{height:2px;background:linear-gradient(to right,transparent,#1a5f3f20,transparent);margin:2rem 0}.ack-logo-grid{align-items:center;justify-content:center}.ack-logo-link{display:flex;align-items:center;justify-content:center;min-height:190px;padding:1.25rem;border:1px solid rgba(26,95,63,.10);border-radius:16px;background:#fff;transition:transform .25s ease,box-shadow .25s ease}.ack-logo-link:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(26,95,63,.14)}.ack-logo{width:100%;max-width:230px;max-height:155px;object-fit:contain}.red-dima-logo{max-width:420px;width:100%;height:auto;filter:drop-shadow(0 8px 18px rgba(26,95,63,.14))}@media(max-width:576px){.logo-img{max-width:380px}#map{height:65vh}.ack-logo-link{min-height:155px}.ack-logo{max-height:125px}}
+</style>
 </head>
 <body class="bg-light">
-    <div class="container py-5">
-        <header class="text-center mb-5">
-            <img src="logo.png" alt="PREDWEEM by Guillermo R. Chantre" class="img-fluid logo-img mb-4">
-            <p class="lead col-lg-9 mx-auto fs-4 text-dark">
-                Herramienta interactiva de <strong>agricultura de precisión</strong> para la predicción de emergencia y fenología de
-                <em>Lolium multiflorum</em> (raigrás anual).
-            </p>
-            <p class="text-muted col-lg-8 mx-auto mb-4">
-                Haz clic en los marcadores del mapa para acceder a las aplicaciones predictivas específicas de cada localidad.
-            </p>
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 fs-6 rounded-3"><i class="bi bi-cpu-fill me-1"></i> Inteligencia Artificial</span>
-                <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 fs-6 rounded-3"><i class="bi bi-droplet-fill me-1"></i> Balance Hídrico</span>
-                <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 fs-6 rounded-3"><i class="bi bi-thermometer-sun me-1"></i> Reloj Térmico</span>
-                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-6 rounded-3"><i class="bi bi-graph-up me-1"></i> Validación en Campo</span>
-            </div>
-        </header>
-
-        <div id="map"></div>
-
-        <div class="explanation-card p-5 mt-4">
-            <div class="row justify-content-center">
-                <div class="col-12 col-xl-10">
-                    <h2 class="section-header h2 text-center mb-5 fw-semibold text-dark">¿Qué es PREDWEEM y para qué sirve?</h2>
-                    <p class="lead text-center mb-5 fs-5">
-                        PREDWEEM es una herramienta que a partir de datos climáticos cotidianos
-                        (temperatura máxima y mínima, lluvia y fecha) predice <strong>día a día</strong> la tasa de emergencia de <em>Lolium sp.</em>
-                        en una localidad específica. Su versión 2026 (K4.9.8) combina inteligencia artificial, física del suelo y fisiología de las plantas
-                        para dar recomendaciones precisas y visuales a cualquier productor o asesor.
-                    </p>
-                    <div class="modern-divider"></div>
-                    <h3 class="h3 mb-4 text-dark"><i class="bi bi-lightning-charge-fill text-success me-2"></i>¿Cómo funciona?</h3>
-                    <p class="lead mb-4">El programa sigue cuatro pasos simples pero muy potentes:</p>
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-6 col-lg-3"><div class="step-card card h-100 border-0 shadow-sm p-4"><div class="text-success mb-3"><i class="bi bi-brain fs-1"></i></div><h5 class="fw-semibold">1. Predicción diaria con “cerebro artificial”</h5><p class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y calcula la probabilidad de germinación cada día.</p></div></div>
-                        <div class="col-md-6 col-lg-3"><div class="step-card card h-100 border-0 shadow-sm p-4"><div class="text-info mb-3"><i class="bi bi-droplet fs-1"></i></div><h5 class="fw-semibold">2. Balance de agua en el suelo</h5><p class="text-muted">Calcula la humedad real en los primeros centímetros. Si el suelo se seca por debajo del 20 % de capacidad, la emergencia se detiene automáticamente. Detecta “choque hídrico” temprano.</p></div></div>
-                        <div class="col-md-6 col-lg-3"><div class="step-card card h-100 border-0 shadow-sm p-4"><div class="text-warning mb-3"><i class="bi bi-thermometer-high fs-1"></i></div><h5 class="fw-semibold">3. Control de temperatura</h5><p class="text-muted">Escudo termofisiológico (media móvil 10 días) y reloj térmico en grados-día (°Cd). Marca la ventana óptima de control a los 600 °Cd y límite a los 800 °Cd.</p></div></div>
-                        <div class="col-md-6 col-lg-3"><div class="step-card card h-100 border-0 shadow-sm p-4"><div class="text-primary mb-3"><i class="bi bi-check-circle fs-1"></i></div><h5 class="fw-semibold">4. Validación con datos de campo</h5><p class="text-muted">Compara la predicción con recuentos reales: Pearson, F1-score, TP/FP/FN/TN, sesgo medio y detección de cohortes (flushes).</p></div></div>
-                    </div>
-                    <div class="modern-divider"></div>
-                    <h3 class="h3 mb-4 text-dark">¿Qué ve el usuario en pantalla?</h3>
-                    <div class="row g-4 text-center">
-                        <div class="col-md-4"><div class="p-3"><i class="bi bi-thermometer-sun fs-1 text-success mb-3 d-block"></i><strong>Mapa de riesgo</strong><br><small class="text-muted">Rojo-verde diario de emergencia</small></div></div>
-                        <div class="col-md-4"><div class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva interactiva</strong><br><small class="text-muted">Simulación + datos de campo con aciertos y errores marcados</small></div></div>
-                        <div class="col-md-4"><div class="p-3"><i class="bi bi-droplet-half fs-1 text-info mb-3 d-block"></i><strong>Balance hídrico</strong><br><small class="text-muted">Lluvia vs. humedad retenida en suelo</small></div></div>
-                    </div>
-                    <p class="text-center text-muted mt-3">+ Medidor de grados-día con pronóstico +7 días • Reporte Excel descargable</p>
-                    <div class="modern-divider"></div>
-                    <h3 class="h3 mb-4 text-dark">¿Por qué es importante para la agricultura?</h3>
-                    <div class="row g-4">
-                        <div class="col-lg-6"><ul class="list-unstyled">
-                            <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Reduce el uso innecesario de herbicidas</span></li>
-                            <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Evita escapes que generan resistencia</span></li>
-                            <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Ahorra dinero y protege el ambiente</span></li>
-                            <li class="d-flex"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Decisión con 7-10 días de anticipación</span></li>
-                        </ul></div>
-                        <div class="col-lg-6"><p class="lead text-muted">PREDWEEM transforma un problema biológico complejo en información clara y accionable. Es un ejemplo claro de <strong>agricultura de precisión accesible</strong> para sistemas de siembra directa de la Pampa.</p></div>
-                    </div>
-                    <div class="text-center mt-5"><p class="text-muted small">Palabras clave: predicción de emergencia • Lolium • balance hídrico superficial • tiempo térmico • validación de cohortes • agricultura de precisión</p></div>
-                </div>
-            </div>
-        </div>
-
-        <section class="acknowledgements-card p-4 p-md-5 mt-4 text-center">
-            <h2 class="section-header h3 mb-4 fw-semibold text-dark">Agradecimientos</h2>
-            <p class="lead mb-4">Agradecimiento especial a las instituciones y a los aportantes que contribuyen al desarrollo, validación y transferencia de PREDWEEM.</p>
-
-            <div class="row g-4 ack-logo-grid mb-4">
-                <div class="col-12 col-md-4">
-                    <a class="ack-logo-link" href="https://cerzos.conicet.gov.ar/" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio del CERZOS">
-                        <img class="ack-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/CERZOS.jpg" alt="Logo CERZOS CONICET UNS" loading="lazy">
-                    </a>
-                </div>
-                <div class="col-12 col-md-4">
-                    <a class="ack-logo-link" href="https://www.argentina.gob.ar/inta" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio del INTA">
-                        <img class="ack-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Intalogo.png" alt="Logo del Instituto Nacional de Tecnología Agropecuaria INTA" loading="lazy">
-                    </a>
-                </div>
-                <div class="col-12 col-md-4">
-                    <a class="ack-logo-link" href="https://www.uns.edu.ar/" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio de la Universidad Nacional del Sur">
-                        <img class="ack-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/EmblemaUNS.jpg" alt="Logo de la Universidad Nacional del Sur" loading="lazy">
-                    </a>
-                </div>
-            </div>
-
-            <div class="modern-divider"></div>
-            <a href="https://github.com/PREDWEEM/mis-apps/blob/main/Logo-Red-DIMA-768x206.png" target="_blank" rel="noopener noreferrer" aria-label="Abrir logo de la Red DIMA en GitHub">
-                <img src="Logo-Red-DIMA-768x206.png" alt="Logo de la Red DIMA" class="img-fluid red-dima-logo">
-            </a>
-        </section>
-
-        <footer class="text-center text-muted mt-5 pt-4">
-            <div class="mb-3"><a href="https://hits.sh/predweem.github.io/mis-apps/" target="_blank" rel="noopener noreferrer" aria-label="Ver estadísticas de visitas de PREDWEEM"><img src="https://hits.sh/predweem.github.io/mis-apps.svg?view=today-total&amp;style=flat-square&amp;label=Visitas&amp;color=1a5f3f&amp;labelColor=6c757d" alt="Contador de visitas de hoy y totales de PREDWEEM"></a></div>
-            <small>
-                Mapa basado en OpenStreetMap contributors &amp; CARTO • Modelos desarrollados para apoyo en la toma de decisiones agronómicas • PREDWEEM vK4.9.8 — 2026
-                <br><strong>Copyright © 2026 Guillermo R. Chantre / PREDWEEM.</strong> Todos los derechos reservados.
-                <br>El uso, reproducción, modificación, redistribución o explotación comercial requiere autorización previa y escrita del titular de los derechos correspondientes.
-            </small>
-        </footer>
-    </div>
-
-    <script>
-        var map = L.map('map', { zoomControl: true, attributionControl: true });
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd', maxZoom: 20, minZoom: 6
-        }).addTo(map);
-
-        var locations = [
-            { coords: [-37.8036, -63.041], name: "Bordenave", url: "https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/", title: "App Emergencia Combinada", offsetX: 0, offsetY: -35 },
-            { coords: [-38.377, -60.276], name: "Tres Arroyos", url: "https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/", title: "App Emergencia", offsetX: 0, offsetY: -35 },
-            { coords: [-37.846, -58.258], name: "Balcarce", url: "https://appemergenciacombinadopy-a5mxrfx78y2hedmzqsy4bx.streamlit.app/", title: "App Emergencia Combinada", offsetX: 0, offsetY: -35 },
-            { coords: [-33.8910, -60.5746], name: "Pergamino", url: "https://appemergenciacombinadopy-zybjv3zntwavn8omppk9ba.streamlit.app/", title: "App Emergencia Combinada", offsetX: 0, offsetY: -35 },
-            { coords: [-33.7328, -59.7965], name: "San Pedro", url: "https://appemergenciapy-rcr8vp23hogconk5efz374.streamlit.app/", title: "App Emergencia", offsetX: 0, offsetY: -35 },
-            { coords: [-36.778, -59.8585], name: "Azul", url: "https://appemergenciacombinadopy-a5e2avvvuf3opkb55cwi5v.streamlit.app/", title: "App Emergencia Combinada", offsetX: 0, offsetY: -35 },
-            { coords: [-36.893, -60.323], name: "Olavarría", url: "https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/", title: "App Emergencia Combinada", offsetX: -48, offsetY: -35 },
-            { coords: [-38.447, -61.566], name: "Lartigau", url: "https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/", title: "App Emergencia", offsetX: 0, offsetY: -20 }
-        ];
-
-        var bounds = L.latLngBounds();
-        locations.forEach(function(loc) {
-            var marker = L.marker(loc.coords, { riseOnHover: true }).addTo(map)
-                .bindTooltip(loc.name, { permanent: true, direction: 'top', offset: L.point(loc.offsetX, loc.offsetY), className: 'city-label' })
-                .bindPopup(`<div class="p-3 text-center"><h5 class="mb-3">${loc.name}</h5><a href="${loc.url}" target="_blank" class="btn btn-success btn-lg w-100 shadow-sm"><i class="bi bi-arrow-right-circle me-2"></i>Acceder a ${loc.title}</a></div>`);
-            bounds.extend(marker.getLatLng());
-        });
-        map.fitBounds(bounds, { padding: [90, 90] });
-        L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
-        console.log('%c✅ PREDWEEM Web Map cargado correctamente', 'color:#1a5f3f; font-weight:bold');
-    </script>
+<div class="container py-5">
+<header class="text-center mb-5">
+<img src="logo.png" alt="PREDWEEM by Guillermo R. Chantre" class="img-fluid logo-img mb-4">
+<p class="lead col-lg-9 mx-auto fs-4 text-dark">Herramienta interactiva de <strong>agricultura de precisión</strong> para la predicción de emergencia y fenología de <em>Lolium multiflorum</em> (raigrás anual).</p>
+<p class="text-muted col-lg-8 mx-auto mb-4">Haz clic en los marcadores del mapa para acceder a las aplicaciones predictivas específicas de cada localidad.</p>
+<div class="d-flex justify-content-center gap-3 flex-wrap"><span class="badge bg-success bg-opacity-10 text-success px-3 py-2 fs-6 rounded-3"><i class="bi bi-cpu-fill me-1"></i> Inteligencia Artificial</span><span class="badge bg-info bg-opacity-10 text-info px-3 py-2 fs-6 rounded-3"><i class="bi bi-droplet-fill me-1"></i> Balance Hídrico</span><span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 fs-6 rounded-3"><i class="bi bi-thermometer-sun me-1"></i> Reloj Térmico</span><span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-6 rounded-3"><i class="bi bi-graph-up me-1"></i> Validación en Campo</span></div>
+</header>
+<div id="map"></div>
+<div class="explanation-card p-5 mt-4"><div class="row justify-content-center"><div class="col-12 col-xl-10">
+<h2 class="section-header h2 text-center mb-5 fw-semibold text-dark">¿Qué es PREDWEEM y para qué sirve?</h2>
+<p class="lead text-center mb-5 fs-5">PREDWEEM es una herramienta que a partir de datos climáticos cotidianos (temperatura máxima y mínima, lluvia y fecha) predice <strong>día a día</strong> la tasa de emergencia de <em>Lolium sp.</em> en una localidad específica. Su versión 2026 (K4.9.8) combina inteligencia artificial, física del suelo y fisiología de las plantas para dar recomendaciones precisas y visuales a cualquier productor o asesor.</p>
+<div class="modern-divider"></div><h3 class="h3 mb-4 text-dark"><i class="bi bi-lightning-charge-fill text-success me-2"></i>¿Cómo funciona?</h3><p class="lead mb-4">El programa sigue cuatro pasos simples pero muy potentes:</p>
+<div class="row g-4 mb-5"><div class="col-md-6 col-lg-3"><div class="step-card card h-100 border-0 shadow-sm p-4"><div class="text-success mb-3"><i class="bi bi-brain fs-1"></i></div><h5 class="fw-semibold">1. Predicción diaria con “cerebro artificial”</h5><p class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y calcula la probabilidad de germinación cada día.</p></div></div><div class="col-md-6 col-lg-3"><div class="step-card card h-100 border-0 shadow-sm p-4"><div class="text-info mb-3"><i class="bi bi-droplet fs-1"></i></div><h5 class="fw-semibold">2. Balance de agua en el suelo</h5><p class="text-muted">Calcula la humedad real en los primeros centímetros. Si el suelo se seca por debajo del 20 % de capacidad, la emergencia se detiene automáticamente. Detecta “choque hídrico” temprano.</p></div></div><div class="col-md-6 col-lg-3"><div class="step-card card h-100 border-0 shadow-sm p-4"><div class="text-warning mb-3"><i class="bi bi-thermometer-high fs-1"></i></div><h5 class="fw-semibold">3. Control de temperatura</h5><p class="text-muted">Escudo termofisiológico (media móvil 10 días) y reloj térmico en grados-día (°Cd). Marca la ventana óptima de control a los 600 °Cd y límite a los 800 °Cd.</p></div></div><div class="col-md-6 col-lg-3"><div class="step-card card h-100 border-0 shadow-sm p-4"><div class="text-primary mb-3"><i class="bi bi-check-circle fs-1"></i></div><h5 class="fw-semibold">4. Validación con datos de campo</h5><p class="text-muted">Compara la predicción con recuentos reales: Pearson, F1-score, TP/FP/FN/TN, sesgo medio y detección de cohortes (flushes).</p></div></div></div>
+<div class="modern-divider"></div><h3 class="h3 mb-4 text-dark">¿Qué ve el usuario en pantalla?</h3><div class="row g-4 text-center"><div class="col-md-4"><div class="p-3"><i class="bi bi-thermometer-sun fs-1 text-success mb-3 d-block"></i><strong>Mapa de riesgo</strong><br><small class="text-muted">Rojo-verde diario de emergencia</small></div></div><div class="col-md-4"><div class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva interactiva</strong><br><small class="text-muted">Simulación + datos de campo con aciertos y errores marcados</small></div></div><div class="col-md-4"><div class="p-3"><i class="bi bi-droplet-half fs-1 text-info mb-3 d-block"></i><strong>Balance hídrico</strong><br><small class="text-muted">Lluvia vs. humedad retenida en suelo</small></div></div></div><p class="text-center text-muted mt-3">+ Medidor de grados-día con pronóstico +7 días • Reporte Excel descargable</p>
+<div class="modern-divider"></div><h3 class="h3 mb-4 text-dark">¿Por qué es importante para la agricultura?</h3><div class="row g-4"><div class="col-lg-6"><ul class="list-unstyled"><li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Reduce el uso innecesario de herbicidas</span></li><li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Evita escapes que generan resistencia</span></li><li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Ahorra dinero y protege el ambiente</span></li><li class="d-flex"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Decisión con 7-10 días de anticipación</span></li></ul></div><div class="col-lg-6"><p class="lead text-muted">PREDWEEM transforma un problema biológico complejo en información clara y accionable. Es un ejemplo claro de <strong>agricultura de precisión accesible</strong> para sistemas de siembra directa de la Pampa.</p></div></div><div class="text-center mt-5"><p class="text-muted small">Palabras clave: predicción de emergencia • Lolium • balance hídrico superficial • tiempo térmico • validación de cohortes • agricultura de precisión</p></div>
+</div></div></div>
+<section class="acknowledgements-card p-4 p-md-5 mt-4 text-center"><h2 class="section-header h3 mb-4 fw-semibold text-dark">Agradecimientos</h2><p class="lead mb-4">Agradecimiento especial a las instituciones y a los aportantes que contribuyen al desarrollo, validación y transferencia de PREDWEEM.</p>
+<div class="row g-4 ack-logo-grid mb-4">
+<div class="col-12 col-sm-6 col-lg-3"><a class="ack-logo-link" href="https://cerzos.conicet.gov.ar/" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio del CERZOS"><img class="ack-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/CERZOS.jpg" alt="Logo CERZOS CONICET UNS" loading="lazy"></a></div>
+<div class="col-12 col-sm-6 col-lg-3"><a class="ack-logo-link" href="https://www.argentina.gob.ar/inta" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio del INTA"><img class="ack-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Intalogo.png" alt="Logo del Instituto Nacional de Tecnología Agropecuaria INTA" loading="lazy"></a></div>
+<div class="col-12 col-sm-6 col-lg-3"><a class="ack-logo-link" href="https://www.uns.edu.ar/" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio de la Universidad Nacional del Sur"><img class="ack-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/EmblemaUNS.jpg" alt="Logo de la Universidad Nacional del Sur" loading="lazy"></a></div>
+<div class="col-12 col-sm-6 col-lg-3"><a class="ack-logo-link" href="https://fca.mdp.edu.ar/" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio de la Facultad de Ciencias Agrarias de la UNMdP"><img class="ack-logo" src="data:image/webp;base64,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" alt="Logo de la Facultad de Ciencias Agrarias de la Universidad Nacional de Mar del Plata, Balcarce" loading="lazy"></a></div>
+</div>
+<div class="modern-divider"></div><a href="https://github.com/PREDWEEM/mis-apps/blob/main/Logo-Red-DIMA-768x206.png" target="_blank" rel="noopener noreferrer" aria-label="Abrir logo de la Red DIMA en GitHub"><img src="Logo-Red-DIMA-768x206.png" alt="Logo de la Red DIMA" class="img-fluid red-dima-logo"></a></section>
+<footer class="text-center text-muted mt-5 pt-4"><div class="mb-3"><a href="https://hits.sh/predweem.github.io/mis-apps/" target="_blank" rel="noopener noreferrer" aria-label="Ver estadísticas de visitas de PREDWEEM"><img src="https://hits.sh/predweem.github.io/mis-apps.svg?view=today-total&amp;style=flat-square&amp;label=Visitas&amp;color=1a5f3f&amp;labelColor=6c757d" alt="Contador de visitas de hoy y totales de PREDWEEM"></a></div><small>Mapa basado en OpenStreetMap contributors &amp; CARTO • Modelos desarrollados para apoyo en la toma de decisiones agronómicas • PREDWEEM vK4.9.8 — 2026<br><strong>Copyright © 2026 Guillermo R. Chantre / PREDWEEM.</strong> Todos los derechos reservados.<br>El uso, reproducción, modificación, redistribución o explotación comercial requiere autorización previa y escrita del titular de los derechos correspondientes.</small></footer>
+</div>
+<script>
+var map=L.map('map',{zoomControl:true,attributionControl:true});L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',subdomains:'abcd',maxZoom:20,minZoom:6}).addTo(map);var locations=[{coords:[-37.8036,-63.041],name:'Bordenave',url:'https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/',title:'App Emergencia Combinada',offsetX:0,offsetY:-35},{coords:[-38.377,-60.276],name:'Tres Arroyos',url:'https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/',title:'App Emergencia',offsetX:0,offsetY:-35},{coords:[-37.846,-58.258],name:'Balcarce',url:'https://appemergenciacombinadopy-a5mxrfx78y2hedmzqsy4bx.streamlit.app/',title:'App Emergencia Combinada',offsetX:0,offsetY:-35},{coords:[-33.891,-60.5746],name:'Pergamino',url:'https://appemergenciacombinadopy-zybjv3zntwavn8omppk9ba.streamlit.app/',title:'App Emergencia Combinada',offsetX:0,offsetY:-35},{coords:[-33.7328,-59.7965],name:'San Pedro',url:'https://appemergenciapy-rcr8vp23hogconk5efz374.streamlit.app/',title:'App Emergencia',offsetX:0,offsetY:-35},{coords:[-36.778,-59.8585],name:'Azul',url:'https://appemergenciacombinadopy-a5e2avvvuf3opkb55cwi5v.streamlit.app/',title:'App Emergencia Combinada',offsetX:0,offsetY:-35},{coords:[-36.893,-60.323],name:'Olavarría',url:'https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/',title:'App Emergencia Combinada',offsetX:-48,offsetY:-35},{coords:[-38.447,-61.566],name:'Lartigau',url:'https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/',title:'App Emergencia',offsetX:0,offsetY:-20}];var bounds=L.latLngBounds();locations.forEach(function(loc){var marker=L.marker(loc.coords,{riseOnHover:true}).addTo(map).bindTooltip(loc.name,{permanent:true,direction:'top',offset:L.point(loc.offsetX,loc.offsetY),className:'city-label'}).bindPopup(`<div class="p-3 text-center"><h5 class="mb-3">${loc.name}</h5><a href="${loc.url}" target="_blank" class="btn btn-success btn-lg w-100 shadow-sm"><i class="bi bi-arrow-right-circle me-2"></i>Acceder a ${loc.title}</a></div>`);bounds.extend(marker.getLatLng())});map.fitBounds(bounds,{padding:[90,90]});L.control.scale({imperial:false,position:'bottomright'}).addTo(map);console.log('%c✅ PREDWEEM Web Map cargado correctamente','color:#1a5f3f;font-weight:bold');
+</script>
 </body>
 </html>
