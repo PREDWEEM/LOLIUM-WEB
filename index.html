@@ -245,7 +245,7 @@
                 </a>
             </div>
             <small>
-                Mapa basado en OpenStreetMap contributors &amp; CARTO • Modelos desarrollados para apoyo en la toma de decisiones agronómicas • PREDWEEM vK4.9.8 — 2026
+                Mapa basado en OpenStreetMap contributors • Modelos desarrollados para apoyo en la toma de decisiones agronómicas • PREDWEEM vK4.9.8 — 2026
                 <br><strong>Copyright © 2026 Guillermo R. Chantre / PREDWEEM.</strong> Todos los derechos reservados.
                 <br>El uso, reproducción, modificación, redistribución o explotación comercial requiere autorización previa y escrita del titular de los derechos correspondientes.
             </small>
@@ -254,10 +254,9 @@
 
     <script>
         const map = L.map('map', { zoomControl: true, attributionControl: true });
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 20,
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19,
             minZoom: 6
         }).addTo(map);
 
