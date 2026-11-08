@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   listar:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       apps: ${{ steps.lista.outputs.apps }}
     steps:
@@ -28,7 +28,7 @@ jobs:
 
   despertar:
     needs: listar
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     strategy:
       fail-fast: false
