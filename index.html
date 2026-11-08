@@ -62,6 +62,20 @@
             transition: transform .25s ease;
         }
         .header-inst:hover img { transform: translateY(-3px); }
+        .campaign-status {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa;
+            border-radius: 999px; padding: .4rem 1rem; font-size: .95rem; font-weight: 500;
+        }
+        .loc-list { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; }
+        .loc-btn {
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .55rem 1.1rem; border-radius: 999px; font-weight: 600;
+            color: var(--primary-green); background: #fff; border: 1.5px solid rgba(26, 95, 63, .35);
+            text-decoration: none; transition: all .2s ease;
+        }
+        .loc-btn:hover, .loc-btn:focus { background: var(--primary-green); color: #fff; border-color: var(--primary-green); }
+        .pub-list li { margin-bottom: .9rem; }
         .explanation-card,
         .acknowledgements-card {
             border: none;
@@ -151,6 +165,9 @@
             <p class="text-muted col-lg-8 mx-auto mb-4">
                 Haz clic en los marcadores del mapa para acceder a las aplicaciones predictivas específicas de cada localidad.
             </p>
+            <div class="mb-4">
+                <span class="campaign-status"><i class="bi bi-calendar-check"></i> Campaña 2026 cerrada (01/01 – 01/10/2026) · las apps muestran los datos de esa campaña</span>
+            </div>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 fs-6 rounded-3"><i class="bi bi-cpu-fill me-1"></i> Inteligencia Artificial</span>
                 <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 fs-6 rounded-3"><i class="bi bi-droplet-fill me-1"></i> Balance Hídrico</span>
@@ -161,6 +178,21 @@
         </header>
 
         <div id="map"></div>
+
+        <nav class="mt-4 text-center" aria-label="Aplicaciones por localidad">
+            <p class="fw-semibold text-dark mb-3">O elegí directamente tu localidad:</p>
+            <div class="loc-list">
+                <a class="loc-btn" href="https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Bordenave</a>
+                <a class="loc-btn" href="https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Tres Arroyos</a>
+                <a class="loc-btn" href="https://appemergenciacombinadopy-a5mxrfx78y2hedmzqsy4bx.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Balcarce</a>
+                <a class="loc-btn" href="https://appemergenciacombinadopy-zybjv3zntwavn8omppk9ba.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Pergamino</a>
+                <a class="loc-btn" href="https://appemergenciapy-rcr8vp23hogconk5efz374.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>San Pedro</a>
+                <a class="loc-btn" href="https://appemergenciacombinadopy-a5e2avvvuf3opkb55cwi5v.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Azul</a>
+                <a class="loc-btn" href="https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Olavarría</a>
+                <a class="loc-btn" href="https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Lartigau</a>
+            </div>
+            <p class="text-muted small mt-3 mb-0"><i class="bi bi-hourglass-split me-1"></i>Las aplicaciones se “duermen” cuando no se usan: la primera carga puede demorar hasta un minuto. Si ves la pantalla de inicio de Streamlit, esperá a que se active.</p>
+        </nav>
 
         <div class="explanation-card p-5 mt-4">
             <div class="row justify-content-center">
@@ -253,6 +285,23 @@
             </div>
         </div>
 
+        <section class="acknowledgements-card p-4 p-md-5 mt-4">
+            <h2 class="section-header h3 mb-4 fw-semibold text-dark">Publicaciones de respaldo</h2>
+            <ul class="list-unstyled pub-list mb-4">
+                <li><i class="bi bi-journal-text text-success me-2"></i>Chantre, G. R., Vigna, M. R., Renzi, J. P. y Blanco, A. M. (2018). A flexible and practical approach for real-time weed emergence prediction based on Artificial Neural Networks. <em>Biosystems Engineering</em>, 170, 51–60. <a href="https://doi.org/10.1016/j.biosystemseng.2018.03.014" target="_blank" rel="noopener noreferrer">doi:10.1016/j.biosystemseng.2018.03.014</a> · <a href="https://ri.conicet.gov.ar/handle/11336/90919" target="_blank" rel="noopener noreferrer">acceso abierto (CONICET Digital)</a></li>
+                <li><i class="bi bi-journal-text text-success me-2"></i>González-Andújar, J. L., Chantre, G. R., Morvillo, C., Blanco, A. M. y Forcella, F. (2016). Predicting field weed emergence with empirical models and soft computing techniques. <em>Weed Research</em>, 56, 415–423. <a href="https://doi.org/10.1111/wre.12223" target="_blank" rel="noopener noreferrer">doi:10.1111/wre.12223</a></li>
+                <li><i class="bi bi-journal-text text-success me-2"></i>Chantre, G. R., Blanco, A. M., Lodovichi, M. V., Bandoni, A. J., Sabbatini, M. R., López, R. L., Vigna, M. R. y Gigón, R. (2012). Modeling <em>Avena fatua</em> seedling emergence dynamics: An artificial neural network approach. <em>Computers and Electronics in Agriculture</em>, 88, 95–102. <a href="https://doi.org/10.1016/j.compag.2012.07.005" target="_blank" rel="noopener noreferrer">doi:10.1016/j.compag.2012.07.005</a></li>
+                <li><i class="bi bi-book text-success me-2"></i>Chantre, G. R. y González-Andújar, J. L. (eds.) (2020). <em>Decision Support Systems for Weed Management</em>. Springer, Cham. <a href="https://doi.org/10.1007/978-3-030-44402-0" target="_blank" rel="noopener noreferrer">doi:10.1007/978-3-030-44402-0</a></li>
+                <li><i class="bi bi-file-earmark-bar-graph text-success me-2"></i>Red DIMA (2026). Reporte especial: nacimientos de malezas, dos campañas para comparar. <a href="https://aappce.org/2026/09/30/reporte-especial-red-dima-nacimientos-de-malezas-dos-campanas-para-comparar/" target="_blank" rel="noopener noreferrer">AAPPCE</a></li>
+            </ul>
+
+            <div class="modern-divider"></div>
+            <h2 class="section-header h3 mb-4 fw-semibold text-dark">Contacto</h2>
+            <p class="mb-2">Para consultas, solicitudes de uso o para aportar conteos de emergencia de tu lote:</p>
+            <p class="mb-0"><strong>Guillermo R. Chantre</strong> — Departamento de Agronomía (UNS) / CERZOS (CONICET-UNS), Bahía Blanca.
+                <br><a href="https://github.com/PREDWEEM" target="_blank" rel="noopener noreferrer"><i class="bi bi-github me-1"></i>github.com/PREDWEEM</a></p>
+        </section>
+
         <section class="acknowledgements-card p-4 p-md-5 mt-4 text-center">
             <h2 class="section-header h3 mb-4 fw-semibold text-dark">Agradecimientos</h2>
             <p class="lead mb-4">Agradecimiento especial a las instituciones y a los aportantes que contribuyen al desarrollo, validación y transferencia de PREDWEEM.</p>
@@ -290,6 +339,7 @@
             </div>
             <small>
                 Mapa basado en OpenStreetMap contributors • Modelos desarrollados para apoyo en la toma de decisiones agronómicas • PREDWEEM vK4.9.15 — 2026
+                <br><strong>Aviso:</strong> PREDWEEM es una herramienta de apoyo a la toma de decisiones. No reemplaza el monitoreo a campo, el diagnóstico profesional ni la evaluación agronómica de cada lote; las decisiones de manejo deben tomarlas profesionales responsables según las condiciones locales y la normativa vigente.
                 <br><strong>Copyright © 2026 Guillermo R. Chantre / PREDWEEM.</strong> Todos los derechos reservados.
                 <br>El uso, reproducción, modificación, redistribución o explotación comercial requiere autorización previa y escrita del titular de los derechos correspondientes.
             </small>
