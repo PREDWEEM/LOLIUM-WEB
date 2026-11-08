@@ -155,6 +155,7 @@
                 <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 fs-6 rounded-3"><i class="bi bi-cpu-fill me-1"></i> Inteligencia Artificial</span>
                 <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 fs-6 rounded-3"><i class="bi bi-droplet-fill me-1"></i> Balance Hídrico</span>
                 <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 fs-6 rounded-3"><i class="bi bi-thermometer-sun me-1"></i> Reloj Térmico</span>
+                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 fs-6 rounded-3"><i class="bi bi-bell-fill me-1"></i> Alerta de Flujos a 7 días</span>
                 <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-6 rounded-3"><i class="bi bi-graph-up me-1"></i> Validación en Campo</span>
             </div>
         </header>
@@ -168,53 +169,85 @@
                     <p class="lead text-center mb-5 fs-5">
                         PREDWEEM es una herramienta que a partir de datos climáticos cotidianos
                         (temperatura máxima y mínima, lluvia y fecha) predice <strong>día a día</strong> la tasa de emergencia de <em>Lolium sp.</em>
-                        en una localidad específica. Su versión 2026 (K4.9.8) combina inteligencia artificial, física del suelo y fisiología de las plantas
+                        en una localidad específica. Su versión 2026 (vK4.9.15) combina inteligencia artificial, física del suelo y fisiología de las plantas
+                        con una <strong>alerta probabilística de flujos de emergencia a 7 días</strong>, validada en 17 campañas,
                         para dar recomendaciones precisas y visuales a cualquier productor o asesor.
                     </p>
 
                     <div class="modern-divider"></div>
                     <h3 class="h3 mb-4 text-dark"><i class="bi bi-lightning-charge-fill text-success me-2"></i>¿Cómo funciona?</h3>
-                    <p class="lead mb-4">El programa sigue cuatro pasos simples pero muy potentes:</p>
+                    <p class="lead mb-4">El programa sigue seis pasos simples pero muy potentes:</p>
 
                     <div class="row g-4 mb-5">
-                        <div class="col-md-6 col-lg-3">
+                        <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
-                                <div class="text-success mb-3"><i class="bi bi-brain fs-1"></i></div>
-                                <h5 class="fw-semibold">1. Predicción diaria con “cerebro artificial”</h5>
-                                <p class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y calcula la probabilidad de germinación cada día.</p>
+                                <div class="text-secondary mb-3"><i class="bi bi-cloud-sun fs-1"></i></div>
+                                <h5 class="fw-semibold">1. Clima observado y pronosticado</h5>
+                                <p class="text-muted">Usa como fuente prioritaria la estación SIGA–INTA de cada localidad. Los días que la estación todavía no publicó se completan provisoriamente con ECMWF IFS, y los 7 días siguientes con la mediana (P50) del pronóstico por ensamble ECMWF ENS. La campaña abarca del 1 de enero al 1 de octubre.</p>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="step-card card h-100 border-0 shadow-sm p-4">
+                                <div class="text-success mb-3"><i class="bi bi-cpu fs-1"></i></div>
+                                <h5 class="fw-semibold">2. Predicción diaria con “cerebro artificial”</h5>
+                                <p class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y calcula la emergencia relativa de cada día. Incluye una latencia inicial de 15 días y habilita la campaña recién con el primer pico válido.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-info mb-3"><i class="bi bi-droplet fs-1"></i></div>
-                                <h5 class="fw-semibold">2. Balance de agua en el suelo</h5>
-                                <p class="text-muted">Calcula la humedad real en los primeros centímetros. Si el suelo se seca por debajo del 20 % de capacidad, la emergencia se detiene automáticamente. Detecta “choque hídrico” temprano.</p>
+                                <h5 class="fw-semibold">3. Balance de agua en el suelo</h5>
+                                <p class="text-muted">Calcula la humedad real en los primeros 10 cm según la cobertura del suelo. Si el suelo se seca por debajo del 20 % de su capacidad, la emergencia se detiene; además detecta el “choque hídrico” (lluvias de 45 mm en 3 días).</p>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3">
+                        <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-warning mb-3"><i class="bi bi-thermometer-high fs-1"></i></div>
-                                <h5 class="fw-semibold">3. Control de temperatura</h5>
-                                <p class="text-muted">Escudo termofisiológico (media móvil 10 días) y reloj térmico en grados-día (°Cd). Marca la ventana óptima de control a los 600 °Cd y límite a los 800 °Cd.</p>
+                                <h5 class="fw-semibold">4. Control de temperatura</h5>
+                                <p class="text-muted">Escudo termofisiológico con un horizonte de 5 días y reloj térmico en grados-día (°Cd). Marca la ventana de control post-emergente a los 600 °Cd y su límite a los 800 °Cd, contados desde la fecha de primeras plántulas cuando se informa.</p>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="step-card card h-100 border-0 shadow-sm p-4">
+                                <div class="text-danger mb-3"><i class="bi bi-bell fs-1"></i></div>
+                                <h5 class="fw-semibold">5. Alerta validada de flujos</h5>
+                                <p class="text-muted">Estima la probabilidad de que en los próximos 7 días emerja ≥ 5 % de la campaña, con niveles <strong>Atención</strong> (desde 15 %) y <strong>Alerta</strong> (desde 25 %). Del 1/05 al 1/10 suma un aviso de <strong>flujos tardíos</strong> (≥ 2 % semanal). Mejora al cargar la fecha de primeras plántulas o los conteos del lote.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-primary mb-3"><i class="bi bi-check-circle fs-1"></i></div>
-                                <h5 class="fw-semibold">4. Validación con datos de campo</h5>
-                                <p class="text-muted">Compara la predicción con recuentos reales: Pearson, F1-score, TP/FP/FN/TN, sesgo medio y detección de cohortes (flushes).</p>
+                                <h5 class="fw-semibold">6. Validación con datos de campo</h5>
+                                <p class="text-muted">Compara la predicción con recuentos reales por intervalo de muestreo (evento a evento): F1-score, exactitud, matriz de confusión, sincronía de inicio del primer flujo y detección de cohortes. Los conteos se cargan como tabla o planilla Excel/CSV.</p>
                             </div>
                         </div>
+                    </div>
+
+                    <h4 class="h5 mb-3 text-dark"><i class="bi bi-clipboard-data text-success me-2"></i>Desempeño de la alerta de grandes flujos</h4>
+                    <p class="text-muted mb-3">Validación dejando cada campaña afuera: 17 campañas, 386 semanas y 97 flujos. Las probabilidades están calibradas.</p>
+                    <div class="table-responsive mb-5">
+                        <table class="table table-sm align-middle text-center bg-white">
+                            <thead class="table-light">
+                                <tr><th class="text-start">Información disponible</th><th>AUC</th><th>Flujos detectados con Alerta</th><th>Semanas marcadas</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="text-start">Solo clima</td><td>0,80</td><td>71 %</td><td>41 %</td></tr>
+                                <tr><td class="text-start">+ fecha de primeras plántulas</td><td>0,84</td><td>77 %</td><td>41 %</td></tr>
+                                <tr><td class="text-start">+ conteos semanales</td><td>0,87</td><td>84 %</td><td>40 %</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="modern-divider"></div>
                     <h3 class="h3 mb-4 text-dark">¿Qué ve el usuario en pantalla?</h3>
                     <div class="row g-4 text-center">
-                        <div class="col-md-4"><div class="p-3"><i class="bi bi-thermometer-sun fs-1 text-success mb-3 d-block"></i><strong>Mapa de riesgo</strong><br><small class="text-muted">Rojo-verde diario de emergencia</small></div></div>
-                        <div class="col-md-4"><div class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva interactiva</strong><br><small class="text-muted">Simulación + datos de campo con aciertos y errores marcados</small></div></div>
-                        <div class="col-md-4"><div class="p-3"><i class="bi bi-droplet-half fs-1 text-info mb-3 d-block"></i><strong>Balance hídrico</strong><br><small class="text-muted">Lluvia vs. humedad retenida en suelo</small></div></div>
+                        <div class="col-6 col-md-4 col-lg"><div class="p-3"><i class="bi bi-bell-fill fs-1 text-danger mb-3 d-block"></i><strong>Alerta de flujos</strong><br><small class="text-muted">Probabilidad a 7 días con niveles Atención / Alerta</small></div></div>
+                        <div class="col-6 col-md-4 col-lg"><div class="p-3"><i class="bi bi-calendar-week fs-1 text-success mb-3 d-block"></i><strong>Semáforo semanal</strong><br><small class="text-muted">Grandes flujos y flujos tardíos semana a semana</small></div></div>
+                        <div class="col-6 col-md-4 col-lg"><div class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva interactiva</strong><br><small class="text-muted">Emergencia diaria y acumulada (también en tiempo térmico desde las primeras plántulas) + datos de campo</small></div></div>
+                        <div class="col-6 col-md-6 col-lg"><div class="p-3"><i class="bi bi-droplet-half fs-1 text-info mb-3 d-block"></i><strong>Balance hídrico</strong><br><small class="text-muted">Lluvia vs. humedad retenida en suelo</small></div></div>
+                        <div class="col-12 col-md-6 col-lg"><div class="p-3"><i class="bi bi-speedometer2 fs-1 text-warning mb-3 d-block"></i><strong>Medidor de grados-día</strong><br><small class="text-muted">Ventana de control 600–800 °Cd con pronóstico +7 días</small></div></div>
                     </div>
-                    <p class="text-center text-muted mt-3">+ Medidor de grados-día con pronóstico +7 días • Reporte Excel descargable</p>
+                    <p class="text-center text-muted mt-3">Reporte Excel descargable • Gráficos exportables en PNG de alta resolución</p>
 
                     <div class="modern-divider"></div>
                     <h3 class="h3 mb-4 text-dark">¿Por qué es importante para la agricultura?</h3>
@@ -224,14 +257,14 @@
                                 <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Reduce el uso innecesario de herbicidas</span></li>
                                 <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Evita escapes que generan resistencia</span></li>
                                 <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Ahorra dinero y protege el ambiente</span></li>
-                                <li class="d-flex"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Decisión con 7-10 días de anticipación</span></li>
+                                <li class="d-flex"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Alerta de flujos con 7 días de anticipación</span></li>
                             </ul>
                         </div>
                         <div class="col-lg-6">
                             <p class="lead text-muted">PREDWEEM transforma un problema biológico complejo en información clara y accionable. Es un ejemplo claro de <strong>agricultura de precisión accesible</strong> para sistemas de siembra directa de la Pampa.</p>
                         </div>
                     </div>
-                    <div class="text-center mt-5"><p class="text-muted small">Palabras clave: predicción de emergencia • Lolium • balance hídrico superficial • tiempo térmico • validación de cohortes • agricultura de precisión</p></div>
+                    <div class="text-center mt-5"><p class="text-muted small">Palabras clave: predicción de emergencia • Lolium • alerta de flujos • pronóstico por ensamble ECMWF • balance hídrico superficial • tiempo térmico • validación de cohortes • agricultura de precisión</p></div>
                 </div>
             </div>
         </div>
@@ -272,7 +305,7 @@
                 </a>
             </div>
             <small>
-                Mapa basado en OpenStreetMap contributors • Modelos desarrollados para apoyo en la toma de decisiones agronómicas • PREDWEEM vK4.9.8 — 2026
+                Mapa basado en OpenStreetMap contributors • Modelos desarrollados para apoyo en la toma de decisiones agronómicas • PREDWEEM vK4.9.15 — 2026
                 <br><strong>Copyright © 2026 Guillermo R. Chantre / PREDWEEM.</strong> Todos los derechos reservados.
                 <br>El uso, reproducción, modificación, redistribución o explotación comercial requiere autorización previa y escrita del titular de los derechos correspondientes.
             </small>
