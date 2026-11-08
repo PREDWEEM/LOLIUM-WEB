@@ -169,7 +169,7 @@
                     <p class="lead text-center mb-5 fs-5">
                         PREDWEEM es una herramienta que a partir de datos climáticos cotidianos
                         (temperatura máxima y mínima, lluvia y fecha) predice <strong>día a día</strong> la tasa de emergencia de <em>Lolium sp.</em>
-                        en una localidad específica. Su versión 2026 (vK4.9.15) combina inteligencia artificial, física del suelo y fisiología de las plantas
+                        en una localidad específica. Su versión 2026 (vK4.9.15) combina una red neuronal que estima el inicio de la emergencia, física del suelo y fisiología de las plantas
                         con una <strong>alerta probabilística de flujos de emergencia a 7 días</strong>, validada en 17 campañas,
                         para dar recomendaciones precisas y visuales a cualquier productor o asesor.
                     </p>
@@ -189,8 +189,8 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-success mb-3"><i class="bi bi-cpu fs-1"></i></div>
-                                <h5 class="fw-semibold">2. Predicción diaria con “cerebro artificial”</h5>
-                                <p class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y calcula la emergencia relativa de cada día. Incluye una latencia inicial de 15 días y habilita la campaña recién con el primer pico válido.</p>
+                                <h5 class="fw-semibold">2. Inicio de la emergencia con “cerebro artificial”</h5>
+                                <p class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y, con los filtros de humedad y temperatura, estima cuándo aparece la <strong>primera cohorte</strong>. Ese inicio estimado arranca el reloj térmico hasta que se informa la fecha de primeras plántulas.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
@@ -204,21 +204,21 @@
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-warning mb-3"><i class="bi bi-thermometer-high fs-1"></i></div>
                                 <h5 class="fw-semibold">4. Control de temperatura</h5>
-                                <p class="text-muted">Escudo termofisiológico con un horizonte de 5 días y reloj térmico en grados-día (°Cd). Marca la ventana de control post-emergente a los 600 °Cd y su límite a los 800 °Cd, contados desde la fecha de primeras plántulas cuando se informa.</p>
+                                <p class="text-muted">Escudo termofisiológico con un horizonte de 5 días y reloj térmico en grados-día (°Cd). Marca la ventana de control post-emergente a los 600 °Cd y su límite a los 800 °Cd, contados desde la fecha de primeras plántulas o, si todavía no se informó, desde el inicio estimado por la red neuronal.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-danger mb-3"><i class="bi bi-bell fs-1"></i></div>
                                 <h5 class="fw-semibold">5. Alerta validada de flujos</h5>
-                                <p class="text-muted">Estima la probabilidad de que en los próximos 7 días emerja ≥ 5 % de la campaña, con niveles <strong>Atención</strong> (desde 15 %) y <strong>Alerta</strong> (desde 25 %). Del 1/05 al 1/10 suma un aviso de <strong>flujos tardíos</strong> (≥ 2 % semanal). Mejora al cargar la fecha de primeras plántulas o los conteos del lote.</p>
+                                <p class="text-muted">Un modelo estadístico calibrado con datos de campo combina el calendario medio de emergencia de 17 campañas y la respuesta a las lluvias registradas (según el agua y la temperatura del suelo) para estimar la probabilidad de que en los próximos 7 días emerja ≥ 5 % de la campaña, con niveles <strong>Atención</strong> (desde 15 %) y <strong>Alerta</strong> (desde 25 %). Del 1/05 al 1/10 suma un aviso de <strong>flujos tardíos</strong> (≥ 2 % semanal). Mejora al cargar la fecha de primeras plántulas o los conteos del lote.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-primary mb-3"><i class="bi bi-check-circle fs-1"></i></div>
                                 <h5 class="fw-semibold">6. Validación con datos de campo</h5>
-                                <p class="text-muted">Compara la predicción con recuentos reales por intervalo de muestreo (evento a evento): F1-score, exactitud, matriz de confusión, sincronía de inicio del primer flujo y detección de cohortes. Los conteos se cargan como tabla o planilla Excel/CSV.</p>
+                                <p class="text-muted">Los conteos del lote se cargan como tabla o planilla Excel/CSV (una columna de fecha y una por marco) y ajustan la alerta y la curva de emergencia acumulada. La alerta se validó dejando cada campaña afuera, en 17 campañas y 97 flujos de emergencia.</p>
                             </div>
                         </div>
                     </div>
@@ -226,13 +226,12 @@
                     <div class="modern-divider"></div>
                     <h3 class="h3 mb-4 text-dark">¿Qué ve el usuario en pantalla?</h3>
                     <div class="row g-4 text-center">
-                        <div class="col-6 col-md-4 col-lg"><div class="p-3"><i class="bi bi-bell-fill fs-1 text-danger mb-3 d-block"></i><strong>Alerta de flujos</strong><br><small class="text-muted">Probabilidad a 7 días con niveles Atención / Alerta</small></div></div>
-                        <div class="col-6 col-md-4 col-lg"><div class="p-3"><i class="bi bi-calendar-week fs-1 text-success mb-3 d-block"></i><strong>Semáforo semanal</strong><br><small class="text-muted">Grandes flujos y flujos tardíos semana a semana</small></div></div>
-                        <div class="col-6 col-md-4 col-lg"><div class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva interactiva</strong><br><small class="text-muted">Emergencia diaria y acumulada (también en tiempo térmico desde las primeras plántulas) + datos de campo</small></div></div>
-                        <div class="col-6 col-md-6 col-lg"><div class="p-3"><i class="bi bi-droplet-half fs-1 text-info mb-3 d-block"></i><strong>Balance hídrico</strong><br><small class="text-muted">Lluvia vs. humedad retenida en suelo</small></div></div>
-                        <div class="col-12 col-md-6 col-lg"><div class="p-3"><i class="bi bi-speedometer2 fs-1 text-warning mb-3 d-block"></i><strong>Medidor de grados-día</strong><br><small class="text-muted">Ventana de control 600–800 °Cd con pronóstico +7 días</small></div></div>
+                        <div class="col-6 col-lg"><div class="p-3"><i class="bi bi-bell-fill fs-1 text-danger mb-3 d-block"></i><strong>Alerta de flujos</strong><br><small class="text-muted">Probabilidad a 7 días con niveles Atención / Alerta</small></div></div>
+                        <div class="col-6 col-lg"><div class="p-3"><i class="bi bi-calendar-week fs-1 text-success mb-3 d-block"></i><strong>Semáforo semanal</strong><br><small class="text-muted">Grandes flujos y flujos tardíos semana a semana</small></div></div>
+                        <div class="col-6 col-lg"><div class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva acumulada</strong><br><small class="text-muted">Emergencia acumulada esperada con su rango (en tiempo térmico desde las primeras plántulas) + conteos del lote</small></div></div>
+                        <div class="col-6 col-md-6 col-lg"><div class="p-3"><i class="bi bi-hourglass-split fs-1 text-warning mb-3 d-block"></i><strong>Ventana de control</strong><br><small class="text-muted">Franja 600–800 °Cd y tiempo térmico acumulado desde el inicio</small></div></div>
                     </div>
-                    <p class="text-center text-muted mt-3">Reporte Excel descargable • Gráficos exportables en PNG de alta resolución</p>
+                    <p class="text-center text-muted mt-3">Reporte Excel descargable con los resultados de la fecha de emisión</p>
 
                     <div class="modern-divider"></div>
                     <h3 class="h3 mb-4 text-dark">¿Por qué es importante para la agricultura?</h3>
