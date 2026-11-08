@@ -75,6 +75,15 @@ def visitar(url: str, nombre: str) -> str:
                     lista_desde = lista_desde or time.monotonic()
                     if time.monotonic() - lista_desde >= 5:
                         s = round(time.monotonic() - inicio)
+                        for frame in pagina.frames:
+                            try:
+                                cont = frame.locator('[data-testid="stAppViewContainer"]')
+                                if cont.count():
+                                    texto = " ".join(cont.first.inner_text().split())
+                                    print(f"Texto visible: {texto[:400]}", flush=True)
+                                    break
+                            except Error:
+                                continue
                         estado = "despertada" if desperto else "ya estaba activa"
                         return f"OK {nombre}: {estado}, cargó en {s} s."
                 else:
