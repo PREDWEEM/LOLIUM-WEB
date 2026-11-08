@@ -1,0 +1,53 @@
+name: Mantener activas las apps del mapa
+
+on:
+  schedule:
+    # Cada 4 horas (UTC), fuera del inicio de la hora. Streamlit Community Cloud
+    # hiberna las apps tras varias horas sin visitas.
+    - cron: "17 */4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mantener-apps-activas
+  cancel-in-progress: false
+
+jobs:
+  listar:
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.lista.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: lista
+        run: echo "apps=$(python3 scripts/despertar_apps.py --listar)" >> "$GITHUB_OUTPUT"
+
+  despertar:
+    needs: listar
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(needs.listar.outputs.apps) }}
+    name: ${{ matrix.app.nombre }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar navegador
+        run: |
+          python -m pip install "playwright==1.58.0"
+          python -m playwright install --with-deps chromium
+      - name: Abrir y despertar ${{ matrix.app.nombre }}
+        env:
+          APP_URL: ${{ matrix.app.url }}
+          APP_NOMBRE: ${{ matrix.app.nombre }}
+        run: python scripts/despertar_apps.py "$APP_URL" "$APP_NOMBRE"
