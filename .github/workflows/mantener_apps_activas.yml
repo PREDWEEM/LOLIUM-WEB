@@ -50,4 +50,41 @@ jobs:
         env:
           APP_URL: ${{ matrix.app.url }}
           APP_NOMBRE: ${{ matrix.app.nombre }}
+          RESULTADO_JSON: resultado-${{ matrix.app.slug }}.json
         run: python scripts/despertar_apps.py "$APP_URL" "$APP_NOMBRE"
+      - name: Guardar resultado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultado-${{ matrix.app.slug }}
+          path: resultado-${{ matrix.app.slug }}.json
+          if-no-files-found: ignore
+          retention-days: 1
+
+  estado:
+    # Actualiza estado_apps.json (colores del mapa) con la respuesta de cada app y sus datos.
+    needs: despertar
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: resultado-*
+          path: resultados
+          merge-multiple: true
+      - name: Calcular estado de las apps
+        run: python3 scripts/estado_apps.py resultados
+      - name: Publicar estado
+        run: |
+          if git diff --quiet -- estado_apps.json; then
+            echo "Sin cambios en el estado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898341+github-actions[bot]@users.noreply.github.com"
+          git add estado_apps.json
+          git commit -m "Actualiza estado de las apps del mapa"
+          git push

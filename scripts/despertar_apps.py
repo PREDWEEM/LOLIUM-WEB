@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import time
+import unicodedata
 from pathlib import Path
 
 INDEX = Path(__file__).resolve().parent.parent / "index.html"
@@ -25,7 +26,10 @@ BOTON_DESPERTAR = re.compile(r"(get this app back up|wake up)", re.IGNORECASE)
 def listar_apps() -> list[dict[str, str]]:
     html = INDEX.read_text(encoding="utf-8")
     patron = re.compile(r"name:\s*'([^']+)'\s*,\s*url:\s*'(https://[^']+)'")
-    apps = [{"nombre": n, "url": u} for n, u in patron.findall(html)]
+    apps = [
+        {"nombre": n, "url": u, "slug": re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFKD", n.lower()).encode("ascii", "ignore").decode()).strip("-")}
+        for n, u in patron.findall(html)
+    ]
     if not apps:
         raise SystemExit("No se encontraron apps en index.html.")
     return apps
@@ -94,6 +98,12 @@ def visitar(url: str, nombre: str) -> str:
             navegador.close()
 
 
+def guardar_resultado(nombre: str, ok: bool) -> None:
+    """Deja el resultado en un JSON para que estado_apps.py arme el estado del mapa."""
+    if ruta := os.environ.get("RESULTADO_JSON"):
+        Path(ruta).write_text(json.dumps({"nombre": nombre, "ok": ok}, ensure_ascii=False), encoding="utf-8")
+
+
 def informar(mensaje: str, url: str) -> None:
     print(mensaje, flush=True)
     if resumen := os.environ.get("GITHUB_STEP_SUMMARY"):
@@ -111,6 +121,8 @@ if __name__ == "__main__":
     nombre = sys.argv[2] if len(sys.argv) > 2 else url
     try:
         informar(visitar(url, nombre), url)
+        guardar_resultado(nombre, True)
     except Exception as error:  # noqa: BLE001
         informar(f"FALLO {nombre}: {error}", url)
+        guardar_resultado(nombre, False)
         raise SystemExit(1)

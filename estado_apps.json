@@ -1,0 +1,78 @@
+{
+  "generado": "2026-11-09T01:21:31+00:00",
+  "fecha_esperada": "2026-10-01",
+  "apps": {
+    "Bordenave": {
+      "repo": "PREDWEEM/LOLIUM_BOR2026",
+      "app_responde": true,
+      "ultima_fecha": "2026-10-01",
+      "dias": 274,
+      "pct_observado": 97,
+      "fuente": "estación SIGA–INTA",
+      "estado": "ok"
+    },
+    "Tres Arroyos": {
+      "repo": "PREDWEEM/loliumTA_2026",
+      "app_responde": true,
+      "ultima_fecha": "2026-10-01",
+      "dias": 274,
+      "pct_observado": 100,
+      "fuente": "estación SIGA–INTA",
+      "estado": "ok"
+    },
+    "Balcarce": {
+      "repo": "PREDWEEM/LOLIUM_BAL2026",
+      "app_responde": true,
+      "ultima_fecha": "2026-10-01",
+      "dias": 274,
+      "pct_observado": 98,
+      "fuente": "estación SIGA–INTA",
+      "estado": "ok"
+    },
+    "Pergamino": {
+      "repo": "PREDWEEM/LOLIUM-PERGA2026",
+      "app_responde": true,
+      "ultima_fecha": "2026-10-01",
+      "dias": 274,
+      "pct_observado": 98,
+      "fuente": "estación SIGA–INTA",
+      "estado": "ok"
+    },
+    "San Pedro": {
+      "repo": "PREDWEEM/lolium_sanpedro2026",
+      "app_responde": true,
+      "ultima_fecha": "2026-10-01",
+      "dias": 274,
+      "pct_observado": 96,
+      "fuente": "estación SIGA–INTA",
+      "estado": "ok"
+    },
+    "Azul": {
+      "repo": "PREDWEEM/LOLIUM_AZUL2026",
+      "app_responde": true,
+      "ultima_fecha": "2026-10-01",
+      "dias": 274,
+      "pct_observado": 0,
+      "fuente": "reanálisis ERA5",
+      "estado": "estimada"
+    },
+    "Olavarría": {
+      "repo": "PREDWEEM/LOLIUM_OLAVA2026",
+      "app_responde": true,
+      "ultima_fecha": "2026-10-01",
+      "dias": 274,
+      "pct_observado": 0,
+      "fuente": "reanálisis ERA5",
+      "estado": "estimada"
+    },
+    "Lartigau": {
+      "repo": "PREDWEEM/LOLIUM_LARTIGAU-2026",
+      "app_responde": true,
+      "ultima_fecha": "2026-10-01",
+      "dias": 274,
+      "pct_observado": 0,
+      "fuente": "pronósticos MeteoBahía archivados",
+      "estado": "estimada"
+    }
+  }
+}

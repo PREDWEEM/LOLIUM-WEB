@@ -67,6 +67,12 @@
             background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa;
             border-radius: 999px; padding: .4rem 1rem; font-size: .95rem; font-weight: 500;
         }
+        .estado-dot { display: inline-block; width: .7rem; height: .7rem; border-radius: 50%; background: #9ca3af; box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.12); flex: 0 0 auto; }
+        .estado-ok { background: #16a34a; } .estado-estimada { background: #f59e0b; }
+        .estado-desactualizada { background: #ea580c; } .estado-caida { background: #dc2626; }
+        .map-legend { background: rgba(255,255,255,.95); padding: .6rem .8rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.15); font-size: .82rem; line-height: 1.7; }
+        .map-legend .estado-dot { margin-right: .45rem; vertical-align: -1px; }
+        .estado-popup { font-size: .85rem; color: #4b5563; margin: -.4rem 0 .8rem; }
         .loc-list { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; }
         .loc-btn {
             display: inline-flex; align-items: center; gap: .4rem;
@@ -181,16 +187,23 @@
         <nav class="mt-4 text-center" aria-label="Aplicaciones por localidad">
             <p class="fw-semibold text-dark mb-3">O elegí directamente tu localidad:</p>
             <div class="loc-list">
-                <a class="loc-btn" href="https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Bordenave</a>
-                <a class="loc-btn" href="https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Tres Arroyos</a>
-                <a class="loc-btn" href="https://appemergenciacombinadopy-a5mxrfx78y2hedmzqsy4bx.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Balcarce</a>
-                <a class="loc-btn" href="https://appemergenciacombinadopy-zybjv3zntwavn8omppk9ba.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Pergamino</a>
-                <a class="loc-btn" href="https://appemergenciapy-rcr8vp23hogconk5efz374.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>San Pedro</a>
-                <a class="loc-btn" href="https://appemergenciacombinadopy-a5e2avvvuf3opkb55cwi5v.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Azul</a>
-                <a class="loc-btn" href="https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Olavarría</a>
-                <a class="loc-btn" href="https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/" target="_blank" rel="noopener noreferrer"><i class="bi bi-geo-alt-fill"></i>Lartigau</a>
+                <a class="loc-btn" data-app="Bordenave" href="https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Bordenave</a>
+                <a class="loc-btn" data-app="Tres Arroyos" href="https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Tres Arroyos</a>
+                <a class="loc-btn" data-app="Balcarce" href="https://appemergenciacombinadopy-a5mxrfx78y2hedmzqsy4bx.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Balcarce</a>
+                <a class="loc-btn" data-app="Pergamino" href="https://appemergenciacombinadopy-zybjv3zntwavn8omppk9ba.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Pergamino</a>
+                <a class="loc-btn" data-app="San Pedro" href="https://appemergenciapy-rcr8vp23hogconk5efz374.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>San Pedro</a>
+                <a class="loc-btn" data-app="Azul" href="https://appemergenciacombinadopy-a5e2avvvuf3opkb55cwi5v.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Azul</a>
+                <a class="loc-btn" data-app="Olavarría" href="https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Olavarría</a>
+                <a class="loc-btn" data-app="Lartigau" href="https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Lartigau</a>
             </div>
-            <p class="text-muted small mt-3 mb-0"><i class="bi bi-hourglass-split me-1"></i>Las aplicaciones se “duermen” cuando no se usan: la primera carga puede demorar hasta un minuto. Si ves la pantalla de inicio de Streamlit, esperá a que se active.</p>
+            <p class="small mt-3 mb-1" id="estado-resumen">
+                <span class="me-3"><span class="estado-dot estado-ok"></span> Datos de estación al día</span>
+                <span class="me-3"><span class="estado-dot estado-estimada"></span> Datos estimados (sin estación)</span>
+                <span class="me-3"><span class="estado-dot estado-desactualizada"></span> Datos atrasados</span>
+                <span><span class="estado-dot estado-caida"></span> App sin respuesta</span>
+            </p>
+            <p class="text-muted small mb-0" id="estado-verificado"></p>
+            <p class="text-muted small mt-2 mb-0"><i class="bi bi-hourglass-split me-1"></i>Las aplicaciones se “duermen” cuando no se usan: la primera carga puede demorar hasta un minuto. Si ves la pantalla de inicio de Streamlit, esperá a que se active.</p>
         </nav>
 
         <div class="explanation-card p-5 mt-4">
@@ -344,19 +357,42 @@
         }).addTo(map);
 
         const locations = [
-            { coords: [-37.8036, -63.041], name: 'Bordenave', url: 'https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/', title: 'App Emergencia Combinada', offsetX: 0, offsetY: -35 },
-            { coords: [-38.377, -60.276], name: 'Tres Arroyos', url: 'https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/', title: 'App Emergencia', offsetX: 0, offsetY: -35 },
-            { coords: [-37.846, -58.258], name: 'Balcarce', url: 'https://appemergenciacombinadopy-a5mxrfx78y2hedmzqsy4bx.streamlit.app/', title: 'App Emergencia Combinada', offsetX: 0, offsetY: -35 },
-            { coords: [-33.891, -60.5746], name: 'Pergamino', url: 'https://appemergenciacombinadopy-zybjv3zntwavn8omppk9ba.streamlit.app/', title: 'App Emergencia Combinada', offsetX: 0, offsetY: -35 },
-            { coords: [-33.7328, -59.7965], name: 'San Pedro', url: 'https://appemergenciapy-rcr8vp23hogconk5efz374.streamlit.app/', title: 'App Emergencia', offsetX: 0, offsetY: -35 },
-            { coords: [-36.778, -59.8585], name: 'Azul', url: 'https://appemergenciacombinadopy-a5e2avvvuf3opkb55cwi5v.streamlit.app/', title: 'App Emergencia Combinada', offsetX: 0, offsetY: -35 },
-            { coords: [-36.893, -60.323], name: 'Olavarría', url: 'https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/', title: 'App Emergencia Combinada', offsetX: -48, offsetY: -35 },
-            { coords: [-38.447, -61.566], name: 'Lartigau', url: 'https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/', title: 'App Emergencia', offsetX: 0, offsetY: -20 }
+            { coords: [-37.8036, -63.041], name: 'Bordenave', url: 'https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/', repo: 'PREDWEEM/LOLIUM_BOR2026', title: 'App Emergencia Combinada', offsetX: 0, offsetY: -35 },
+            { coords: [-38.377, -60.276], name: 'Tres Arroyos', url: 'https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/', repo: 'PREDWEEM/loliumTA_2026', title: 'App Emergencia', offsetX: 0, offsetY: -35 },
+            { coords: [-37.846, -58.258], name: 'Balcarce', url: 'https://appemergenciacombinadopy-a5mxrfx78y2hedmzqsy4bx.streamlit.app/', repo: 'PREDWEEM/LOLIUM_BAL2026', title: 'App Emergencia Combinada', offsetX: 0, offsetY: -35 },
+            { coords: [-33.891, -60.5746], name: 'Pergamino', url: 'https://appemergenciacombinadopy-zybjv3zntwavn8omppk9ba.streamlit.app/', repo: 'PREDWEEM/LOLIUM-PERGA2026', title: 'App Emergencia Combinada', offsetX: 0, offsetY: -35 },
+            { coords: [-33.7328, -59.7965], name: 'San Pedro', url: 'https://appemergenciapy-rcr8vp23hogconk5efz374.streamlit.app/', repo: 'PREDWEEM/lolium_sanpedro2026', title: 'App Emergencia', offsetX: 0, offsetY: -35 },
+            { coords: [-36.778, -59.8585], name: 'Azul', url: 'https://appemergenciacombinadopy-a5e2avvvuf3opkb55cwi5v.streamlit.app/', repo: 'PREDWEEM/LOLIUM_AZUL2026', title: 'App Emergencia Combinada', offsetX: 0, offsetY: -35 },
+            { coords: [-36.893, -60.323], name: 'Olavarría', url: 'https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/', repo: 'PREDWEEM/LOLIUM_OLAVA2026', title: 'App Emergencia Combinada', offsetX: -48, offsetY: -35 },
+            { coords: [-38.447, -61.566], name: 'Lartigau', url: 'https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/', repo: 'PREDWEEM/LOLIUM_LARTIGAU-2026', title: 'App Emergencia', offsetX: 0, offsetY: -20 }
         ];
 
+        const ESTADOS = {
+            ok: { color: '#16a34a', texto: 'Operativa · datos de estación al día' },
+            estimada: { color: '#f59e0b', texto: 'Operativa · datos estimados (sin estación meteorológica)' },
+            desactualizada: { color: '#ea580c', texto: 'Operativa · datos meteorológicos atrasados' },
+            caida: { color: '#dc2626', texto: 'Sin respuesta en la última verificación' },
+            desconocido: { color: '#6b7280', texto: 'Estado sin verificar' }
+        };
+        const iconoPin = (color) => L.divIcon({
+            className: '',
+            iconSize: [26, 40], iconAnchor: [13, 40], popupAnchor: [0, -34],
+            html: `<svg width="26" height="40" viewBox="0 0 26 40" xmlns="http://www.w3.org/2000/svg"><path d="M13 1C6.4 1 1 6.3 1 12.9 1 22 13 39 13 39s12-17 12-26.1C25 6.3 19.6 1 13 1z" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="13" cy="13" r="4.6" fill="#fff"/></svg>`
+        });
+        const fechaCorta = (iso) => iso ? iso.split('-').reverse().join('/') : '';
+        const popupHtml = (loc, info) => {
+            const e = ESTADOS[(info && info.estado) || 'desconocido'] || ESTADOS.desconocido;
+            const datos = info && info.ultima_fecha
+                ? `<div class="estado-popup">Datos hasta ${fechaCorta(info.ultima_fecha)} · ${info.fuente} (${info.pct_observado}% observados)</div>` : '';
+            return `<div class="p-3 text-center"><h5 class="mb-2">${loc.name}</h5>`
+                + `<div class="mb-2" style="color:${e.color};font-weight:600"><span class="estado-dot" style="background:${e.color}"></span> ${e.texto}</div>${datos}`
+                + `<a href="${loc.url}" target="_blank" class="btn btn-success btn-lg w-100 shadow-sm"><i class="bi bi-arrow-right-circle me-2"></i>Acceder a ${loc.title}</a></div>`;
+        };
+
         const bounds = L.latLngBounds();
+        const marcadores = {};
         locations.forEach((loc) => {
-            const marker = L.marker(loc.coords, { riseOnHover: true })
+            const marker = L.marker(loc.coords, { riseOnHover: true, icon: iconoPin(ESTADOS.desconocido.color) })
                 .addTo(map)
                 .bindTooltip(loc.name, {
                     permanent: true,
@@ -364,10 +400,39 @@
                     offset: L.point(loc.offsetX, loc.offsetY),
                     className: 'city-label'
                 })
-                .bindPopup(`<div class="p-3 text-center"><h5 class="mb-3">${loc.name}</h5><a href="${loc.url}" target="_blank" class="btn btn-success btn-lg w-100 shadow-sm"><i class="bi bi-arrow-right-circle me-2"></i>Acceder a ${loc.title}</a></div>`);
+                .bindPopup(popupHtml(loc, null));
+            marcadores[loc.name] = { marker, loc };
             bounds.extend(marker.getLatLng());
         });
         map.fitBounds(bounds, { padding: [90, 90] });
+
+        const leyenda = L.control({ position: 'bottomleft' });
+        leyenda.onAdd = () => {
+            const div = L.DomUtil.create('div', 'map-legend');
+            div.innerHTML = ['ok', 'estimada', 'desactualizada', 'caida']
+                .map((k) => `<div><span class="estado-dot" style="background:${ESTADOS[k].color}"></span>${((t) => t.charAt(0).toUpperCase() + t.slice(1))(ESTADOS[k].texto.replace('Operativa · ', ''))}</div>`).join('');
+            return div;
+        };
+
+        fetch('estado_apps.json', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : Promise.reject(r.status))
+            .then((estado) => {
+                Object.entries(marcadores).forEach(([nombre, { marker, loc }]) => {
+                    const info = estado.apps && estado.apps[nombre];
+                    const e = ESTADOS[(info && info.estado) || 'desconocido'] || ESTADOS.desconocido;
+                    marker.setIcon(iconoPin(e.color));
+                    marker.setPopupContent(popupHtml(loc, info));
+                    const dot = document.querySelector(`.loc-btn[data-app="${nombre}"] .estado-dot`);
+                    if (dot && info) { dot.className = `estado-dot estado-${info.estado}`; dot.title = e.texto; }
+                });
+                leyenda.addTo(map);
+                if (estado.generado) {
+                    const d = new Date(estado.generado);
+                    document.getElementById('estado-verificado').textContent =
+                        `Estado verificado automáticamente el ${d.toLocaleDateString('es-AR')} a las ${d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })} (se actualiza cada 4 horas).`;
+                }
+            })
+            .catch(() => { document.getElementById('estado-resumen').style.display = 'none'; });
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
     </script>
 </body>
