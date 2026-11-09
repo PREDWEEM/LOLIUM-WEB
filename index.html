@@ -62,6 +62,7 @@
             transition: transform .25s ease;
         }
         .header-inst:hover img { transform: translateY(-3px); }
+        .campaign-status.en-curso { background: #ecfdf5; color: #166534; border-color: #bbf7d0; }
         .campaign-status {
             display: inline-flex; align-items: center; gap: .5rem;
             background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa;
@@ -171,7 +172,7 @@
                 Haz clic en los marcadores del mapa para acceder a las aplicaciones predictivas específicas de cada localidad.
             </p>
             <div class="mb-4">
-                <span class="campaign-status"><i class="bi bi-calendar-check"></i> Campaña 2026 cerrada (01/01 – 01/10/2026) · las apps muestran los datos de esa campaña</span>
+                <span class="campaign-status" id="campaign-status"><i class="bi bi-calendar-check"></i> <span id="campaign-text">Campaña 2026 cerrada (01/01 – 01/10/2026) · las apps muestran los datos de esa campaña</span></span>
             </div>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 fs-6 rounded-3"><i class="bi bi-cpu-fill me-1"></i> Inteligencia Artificial</span>
@@ -349,6 +350,22 @@
     </div>
 
     <script>
+        (() => {
+            // Campaña: 1/01 al 1/10 de cada año (hora de Argentina).
+            const partes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Argentina/Buenos_Aires', year: 'numeric', month: '2-digit', day: '2-digit' })
+                .format(new Date()).split('-').map(Number);
+            const [anio, mes, dia] = partes;
+            const enCurso = mes < 10 || (mes === 10 && dia === 1);
+            const texto = document.getElementById('campaign-text');
+            if (!texto) return;
+            if (enCurso) {
+                texto.textContent = `Campaña ${anio} en curso (01/01 – 01/10/${anio}) · datos meteorológicos y alertas actualizados a diario`;
+                document.getElementById('campaign-status').classList.add('en-curso');
+            } else {
+                texto.textContent = `Campaña ${anio} cerrada (01/01 – 01/10/${anio}) · las apps muestran los datos de esa campaña; la campaña ${anio + 1} comienza el 01/01/${anio + 1}`;
+            }
+        })();
+
         const map = L.map('map', { zoomControl: true, attributionControl: true });
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
