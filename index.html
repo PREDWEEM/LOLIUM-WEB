@@ -133,6 +133,18 @@
             height: auto;
             filter: drop-shadow(0 8px 18px rgba(26, 95, 63, .14));
         }
+        .lang-switch {
+            position: absolute; top: 1rem; right: 1rem; z-index: 1100;
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .45rem .95rem; border-radius: 999px; font-weight: 600; font-size: .95rem;
+            color: var(--primary-green); background: #fff; border: 1.5px solid rgba(26, 95, 63, .35);
+            box-shadow: 0 4px 14px rgba(26, 95, 63, .12); cursor: pointer; transition: all .2s ease;
+        }
+        .lang-switch:hover, .lang-switch:focus-visible { background: var(--primary-green); color: #fff; border-color: var(--primary-green); }
+        @media (max-width: 1100px) {
+            body > .container { padding-top: 4.25rem !important; }
+            .lang-switch { top: .75rem; right: .75rem; padding: .35rem .85rem; font-size: .88rem; }
+        }
         @media (max-width: 576px) {
             .logo-img { max-width: 380px; }
             #map { height: 65vh; }
@@ -142,34 +154,35 @@
     </style>
 </head>
 <body class="bg-light">
+    <button type="button" class="lang-switch" id="lang-switch" aria-label="Translate to English" title="Translate to English"><i class="bi bi-translate"></i> <span id="lang-label">English</span></button>
     <div class="container py-5">
         <header class="text-center mb-5">
             <div class="header-brand mb-4">
                 <img src="logo.png" alt="PREDWEEM by Guillermo R. Chantre" class="img-fluid logo-img">
             </div>
-            <p class="lead col-lg-9 mx-auto fs-4 text-dark">
+            <p data-i18n="lead" class="lead col-lg-9 mx-auto fs-4 text-dark">
                 Herramienta interactiva de <strong>agricultura de precisión</strong> para la predicción de emergencia y fenología de
                 <em>Lolium multiflorum</em> (raigrás anual).
             </p>
-            <p class="text-muted col-lg-8 mx-auto mb-4">
+            <p data-i18n="clickHint" class="text-muted col-lg-8 mx-auto mb-4">
                 Haz clic en los marcadores del mapa para acceder a las aplicaciones predictivas específicas de cada localidad.
             </p>
             <div class="mb-4">
                 <span class="campaign-status" id="campaign-status"><i class="bi bi-calendar-check"></i> <span id="campaign-text">Campaña 2026 cerrada (01/01 – 01/10/2026) · las apps muestran los datos de esa campaña</span></span>
             </div>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 fs-6 rounded-3"><i class="bi bi-cpu-fill me-1"></i> Inteligencia Artificial</span>
-                <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 fs-6 rounded-3"><i class="bi bi-droplet-fill me-1"></i> Balance Hídrico</span>
-                <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 fs-6 rounded-3"><i class="bi bi-thermometer-sun me-1"></i> Reloj Térmico</span>
-                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 fs-6 rounded-3"><i class="bi bi-bell-fill me-1"></i> Alerta de Flujos a 7 días</span>
-                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-6 rounded-3"><i class="bi bi-graph-up me-1"></i> Validación en Campo</span>
+                <span data-i18n="b1" class="badge bg-success bg-opacity-10 text-success px-3 py-2 fs-6 rounded-3"><i class="bi bi-cpu-fill me-1"></i> Inteligencia Artificial</span>
+                <span data-i18n="b2" class="badge bg-info bg-opacity-10 text-info px-3 py-2 fs-6 rounded-3"><i class="bi bi-droplet-fill me-1"></i> Balance Hídrico</span>
+                <span data-i18n="b3" class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 fs-6 rounded-3"><i class="bi bi-thermometer-sun me-1"></i> Reloj Térmico</span>
+                <span data-i18n="b4" class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 fs-6 rounded-3"><i class="bi bi-bell-fill me-1"></i> Alerta de Flujos a 7 días</span>
+                <span data-i18n="b5" class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-6 rounded-3"><i class="bi bi-graph-up me-1"></i> Validación en Campo</span>
             </div>
         </header>
 
         <div id="map"></div>
 
         <nav class="mt-4 text-center" aria-label="Aplicaciones por localidad">
-            <p class="fw-semibold text-dark mb-3">O elegí directamente tu localidad:</p>
+            <p data-i18n="chooseLoc" class="fw-semibold text-dark mb-3">O elegí directamente tu localidad:</p>
             <div class="loc-list">
                 <a class="loc-btn" data-app="Bordenave" href="https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Bordenave</a>
                 <a class="loc-btn" data-app="Tres Arroyos" href="https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Tres Arroyos</a>
@@ -180,21 +193,21 @@
                 <a class="loc-btn" data-app="Olavarría" href="https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Olavarría</a>
                 <a class="loc-btn" data-app="Lartigau" href="https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/" target="_blank" rel="noopener noreferrer"><span class="estado-dot"></span>Lartigau</a>
             </div>
-            <p class="small mt-3 mb-1" id="estado-resumen">
+            <p data-i18n="statusLegend" class="small mt-3 mb-1" id="estado-resumen">
                 <span class="me-3"><span class="estado-dot estado-ok"></span> Datos de estación al día</span>
                 <span class="me-3"><span class="estado-dot estado-estimada"></span> Datos estimados (sin estación)</span>
                 <span class="me-3"><span class="estado-dot estado-desactualizada"></span> Datos atrasados</span>
                 <span><span class="estado-dot estado-caida"></span> App sin respuesta</span>
             </p>
             <p class="text-muted small mb-0" id="estado-verificado"></p>
-            <p class="text-muted small mt-2 mb-0"><i class="bi bi-hourglass-split me-1"></i>Las aplicaciones se “duermen” cuando no se usan: la primera carga puede demorar hasta un minuto. Si ves la pantalla de inicio de Streamlit, esperá a que se active.</p>
+            <p data-i18n="sleepNote" class="text-muted small mt-2 mb-0"><i class="bi bi-hourglass-split me-1"></i>Las aplicaciones se “duermen” cuando no se usan: la primera carga puede demorar hasta un minuto. Si ves la pantalla de inicio de Streamlit, esperá a que se active.</p>
         </nav>
 
         <div class="explanation-card p-5 mt-4">
             <div class="row justify-content-center">
                 <div class="col-12 col-xl-10">
-                    <h2 class="section-header h2 text-center mb-5 fw-semibold text-dark">¿Qué es PREDWEEM y para qué sirve?</h2>
-                    <p class="lead text-center mb-5 fs-5">
+                    <h2 data-i18n="whatIs" class="section-header h2 text-center mb-5 fw-semibold text-dark">¿Qué es PREDWEEM y para qué sirve?</h2>
+                    <p data-i18n="whatIsText" class="lead text-center mb-5 fs-5">
                         PREDWEEM es una herramienta que a partir de datos climáticos cotidianos
                         (temperatura máxima y mínima, lluvia y fecha) predice <strong>día a día</strong> la tasa de emergencia de <em>Lolium sp.</em>
                         en una localidad específica. Su versión 2026 (vK4.9.15) combina una red neuronal que estima el inicio de la emergencia, física del suelo y fisiología de las plantas
@@ -203,94 +216,94 @@
                     </p>
 
                     <div class="modern-divider"></div>
-                    <h3 class="h3 mb-4 text-dark"><i class="bi bi-lightning-charge-fill text-success me-2"></i>¿Cómo funciona?</h3>
-                    <p class="lead mb-4">El programa sigue seis pasos simples pero muy potentes:</p>
+                    <h3 data-i18n="how" class="h3 mb-4 text-dark"><i class="bi bi-lightning-charge-fill text-success me-2"></i>¿Cómo funciona?</h3>
+                    <p data-i18n="howIntro" class="lead mb-4">El programa sigue seis pasos simples pero muy potentes:</p>
 
                     <div class="row g-4 mb-5">
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-secondary mb-3"><i class="bi bi-cloud-sun fs-1"></i></div>
-                                <h5 class="fw-semibold">1. Clima observado y pronosticado</h5>
-                                <p class="text-muted">Usa como fuente prioritaria la estación SIGA–INTA de cada localidad. Los días que la estación todavía no publicó se completan provisoriamente con ECMWF IFS, y los 7 días siguientes con la mediana (P50) del pronóstico por ensamble ECMWF ENS. La campaña abarca del 1 de enero al 1 de octubre.</p>
+                                <h5 data-i18n="s1t" class="fw-semibold">1. Clima observado y pronosticado</h5>
+                                <p data-i18n="s1p" class="text-muted">Usa como fuente prioritaria la estación SIGA–INTA de cada localidad. Los días que la estación todavía no publicó se completan provisoriamente con ECMWF IFS, y los 7 días siguientes con la mediana (P50) del pronóstico por ensamble ECMWF ENS. La campaña abarca del 1 de enero al 1 de octubre.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-success mb-3"><i class="bi bi-cpu fs-1"></i></div>
-                                <h5 class="fw-semibold">2. Inicio de la emergencia con “cerebro artificial”</h5>
-                                <p class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y, con los filtros de humedad y temperatura, estima cuándo aparece la <strong>primera cohorte</strong>. Ese inicio estimado arranca el reloj térmico hasta que se informa la fecha de primeras plántulas.</p>
+                                <h5 data-i18n="s2t" class="fw-semibold">2. Inicio de la emergencia con “cerebro artificial”</h5>
+                                <p data-i18n="s2p" class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y, con los filtros de humedad y temperatura, estima cuándo aparece la <strong>primera cohorte</strong>. Ese inicio estimado arranca el reloj térmico hasta que se informa la fecha de primeras plántulas.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-info mb-3"><i class="bi bi-droplet fs-1"></i></div>
-                                <h5 class="fw-semibold">3. Balance de agua en el suelo</h5>
-                                <p class="text-muted">Calcula la humedad real en los primeros 10 cm según la cobertura del suelo. Si el suelo se seca por debajo del 20 % de su capacidad, la emergencia se detiene; además detecta el “choque hídrico” (lluvias de 45 mm en 3 días).</p>
+                                <h5 data-i18n="s3t" class="fw-semibold">3. Balance de agua en el suelo</h5>
+                                <p data-i18n="s3p" class="text-muted">Calcula la humedad real en los primeros 10 cm según la cobertura del suelo. Si el suelo se seca por debajo del 20 % de su capacidad, la emergencia se detiene; además detecta el “choque hídrico” (lluvias de 45 mm en 3 días).</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-warning mb-3"><i class="bi bi-thermometer-high fs-1"></i></div>
-                                <h5 class="fw-semibold">4. Control de temperatura</h5>
-                                <p class="text-muted">Escudo termofisiológico con un horizonte de 5 días y reloj térmico en grados-día (°Cd). Marca la ventana de control post-emergente a los 600 °Cd y su límite a los 800 °Cd, contados desde la fecha de primeras plántulas o, si todavía no se informó, desde el inicio estimado por la red neuronal.</p>
+                                <h5 data-i18n="s4t" class="fw-semibold">4. Control de temperatura</h5>
+                                <p data-i18n="s4p" class="text-muted">Escudo termofisiológico con un horizonte de 5 días y reloj térmico en grados-día (°Cd). Marca la ventana de control post-emergente a los 600 °Cd y su límite a los 800 °Cd, contados desde la fecha de primeras plántulas o, si todavía no se informó, desde el inicio estimado por la red neuronal.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-danger mb-3"><i class="bi bi-bell fs-1"></i></div>
-                                <h5 class="fw-semibold">5. Alerta validada de flujos</h5>
-                                <p class="text-muted">Un modelo estadístico calibrado con datos de campo combina el calendario medio de emergencia de 17 campañas y la respuesta a las lluvias registradas (según el agua y la temperatura del suelo) para estimar la probabilidad de que en los próximos 7 días emerja ≥ 5 % de la campaña, con niveles <strong>Atención</strong> (desde 15 %) y <strong>Alerta</strong> (desde 25 %). Del 1/05 al 1/10 suma un aviso de <strong>flujos tardíos</strong> (≥ 2 % semanal). Mejora al cargar la fecha de primeras plántulas o los conteos del lote.</p>
+                                <h5 data-i18n="s5t" class="fw-semibold">5. Alerta validada de flujos</h5>
+                                <p data-i18n="s5p" class="text-muted">Un modelo estadístico calibrado con datos de campo combina el calendario medio de emergencia de 17 campañas y la respuesta a las lluvias registradas (según el agua y la temperatura del suelo) para estimar la probabilidad de que en los próximos 7 días emerja ≥ 5 % de la campaña, con niveles <strong>Atención</strong> (desde 15 %) y <strong>Alerta</strong> (desde 25 %). Del 1/05 al 1/10 suma un aviso de <strong>flujos tardíos</strong> (≥ 2 % semanal). Mejora al cargar la fecha de primeras plántulas o los conteos del lote.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-primary mb-3"><i class="bi bi-check-circle fs-1"></i></div>
-                                <h5 class="fw-semibold">6. Validación con datos de campo</h5>
-                                <p class="text-muted">Los conteos del lote se cargan como tabla o planilla Excel/CSV (una columna de fecha y una por marco) y ajustan la alerta y la curva de emergencia acumulada. La alerta se validó dejando cada campaña afuera, en 17 campañas y 97 flujos de emergencia.</p>
+                                <h5 data-i18n="s6t" class="fw-semibold">6. Validación con datos de campo</h5>
+                                <p data-i18n="s6p" class="text-muted">Los conteos del lote se cargan como tabla o planilla Excel/CSV (una columna de fecha y una por marco) y ajustan la alerta y la curva de emergencia acumulada. La alerta se validó dejando cada campaña afuera, en 17 campañas y 97 flujos de emergencia.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="modern-divider"></div>
-                    <h3 class="h3 mb-4 text-dark">¿Qué ve el usuario en pantalla?</h3>
+                    <h3 data-i18n="screen" class="h3 mb-4 text-dark">¿Qué ve el usuario en pantalla?</h3>
                     <div class="row g-4 text-center">
-                        <div class="col-6 col-lg"><div class="p-3"><i class="bi bi-bell-fill fs-1 text-danger mb-3 d-block"></i><strong>Alerta de flujos</strong><br><small class="text-muted">Probabilidad a 7 días con niveles Atención / Alerta</small></div></div>
-                        <div class="col-6 col-lg"><div class="p-3"><i class="bi bi-calendar-week fs-1 text-success mb-3 d-block"></i><strong>Semáforo semanal</strong><br><small class="text-muted">Grandes flujos y flujos tardíos semana a semana</small></div></div>
-                        <div class="col-6 col-lg"><div class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva acumulada</strong><br><small class="text-muted">Emergencia acumulada esperada con su rango (en tiempo térmico desde las primeras plántulas) + conteos del lote</small></div></div>
-                        <div class="col-6 col-md-6 col-lg"><div class="p-3"><i class="bi bi-hourglass-split fs-1 text-warning mb-3 d-block"></i><strong>Ventana de control</strong><br><small class="text-muted">Franja 600–800 °Cd y tiempo térmico acumulado desde el inicio</small></div></div>
+                        <div class="col-6 col-lg"><div data-i18n="sc1" class="p-3"><i class="bi bi-bell-fill fs-1 text-danger mb-3 d-block"></i><strong>Alerta de flujos</strong><br><small class="text-muted">Probabilidad a 7 días con niveles Atención / Alerta</small></div></div>
+                        <div class="col-6 col-lg"><div data-i18n="sc2" class="p-3"><i class="bi bi-calendar-week fs-1 text-success mb-3 d-block"></i><strong>Semáforo semanal</strong><br><small class="text-muted">Grandes flujos y flujos tardíos semana a semana</small></div></div>
+                        <div class="col-6 col-lg"><div data-i18n="sc3" class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva acumulada</strong><br><small class="text-muted">Emergencia acumulada esperada con su rango (en tiempo térmico desde las primeras plántulas) + conteos del lote</small></div></div>
+                        <div class="col-6 col-md-6 col-lg"><div data-i18n="sc4" class="p-3"><i class="bi bi-hourglass-split fs-1 text-warning mb-3 d-block"></i><strong>Ventana de control</strong><br><small class="text-muted">Franja 600–800 °Cd y tiempo térmico acumulado desde el inicio</small></div></div>
                     </div>
-                    <p class="text-center text-muted mt-3">Reporte Excel descargable con los resultados de la fecha de emisión</p>
+                    <p data-i18n="excel" class="text-center text-muted mt-3">Reporte Excel descargable con los resultados de la fecha de emisión</p>
 
                     <div class="modern-divider"></div>
-                    <h3 class="h3 mb-4 text-dark">¿Por qué es importante para la agricultura?</h3>
+                    <h3 data-i18n="why" class="h3 mb-4 text-dark">¿Por qué es importante para la agricultura?</h3>
                     <div class="row g-4">
                         <div class="col-lg-6">
                             <ul class="list-unstyled">
-                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Reduce el uso innecesario de herbicidas</span></li>
-                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Evita escapes que generan resistencia</span></li>
-                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Ahorra dinero y protege el ambiente</span></li>
-                                <li class="d-flex"><i class="bi bi-check-circle-fill text-success me-3"></i><span>Alerta de flujos con 7 días de anticipación</span></li>
+                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span data-i18n="w1">Reduce el uso innecesario de herbicidas</span></li>
+                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span data-i18n="w2">Evita escapes que generan resistencia</span></li>
+                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill text-success me-3"></i><span data-i18n="w3">Ahorra dinero y protege el ambiente</span></li>
+                                <li class="d-flex"><i class="bi bi-check-circle-fill text-success me-3"></i><span data-i18n="w4">Alerta de flujos con 7 días de anticipación</span></li>
                             </ul>
                         </div>
                         <div class="col-lg-6">
-                            <p class="lead text-muted">PREDWEEM transforma un problema biológico complejo en información clara y accionable. Es un ejemplo claro de <strong>agricultura de precisión accesible</strong> para sistemas de siembra directa de la Pampa.</p>
+                            <p data-i18n="whyText" class="lead text-muted">PREDWEEM transforma un problema biológico complejo en información clara y accionable. Es un ejemplo claro de <strong>agricultura de precisión accesible</strong> para sistemas de siembra directa de la Pampa.</p>
                         </div>
                     </div>
-                    <div class="text-center mt-5"><p class="text-muted small">Palabras clave: predicción de emergencia • Lolium • alerta de flujos • pronóstico por ensamble ECMWF • balance hídrico superficial • tiempo térmico • validación de cohortes • agricultura de precisión</p></div>
+                    <div class="text-center mt-5"><p data-i18n="keywords" class="text-muted small">Palabras clave: predicción de emergencia • Lolium • alerta de flujos • pronóstico por ensamble ECMWF • balance hídrico superficial • tiempo térmico • validación de cohortes • agricultura de precisión</p></div>
                 </div>
             </div>
         </div>
 
         <section class="acknowledgements-card p-4 p-md-5 mt-4">
-            <h2 class="section-header h3 mb-4 fw-semibold text-dark">Contacto</h2>
-            <p class="mb-2">Para consultas, solicitudes de uso o para aportar conteos de emergencia de tu lote:</p>
+            <h2 data-i18n="contact" class="section-header h3 mb-4 fw-semibold text-dark">Contacto</h2>
+            <p data-i18n="contactText" class="mb-2">Para consultas, solicitudes de uso o para aportar conteos de emergencia de tu lote:</p>
             <p class="mb-0"><strong>Guillermo R. Chantre</strong> — Departamento de Agronomía (UNS) / CERZOS (CONICET-UNS), Bahía Blanca.
                 <br><a href="mailto:chantreguillermo@gmail.com"><i class="bi bi-envelope-fill me-1"></i>chantreguillermo@gmail.com</a></p>
         </section>
 
         <section class="acknowledgements-card p-4 p-md-5 mt-4 text-center">
-            <h2 class="section-header h3 mb-4 fw-semibold text-dark">Agradecimientos</h2>
-            <p class="lead mb-4">Agradecimiento especial a las instituciones y a los aportantes que contribuyen al desarrollo, validación y transferencia de PREDWEEM.</p>
+            <h2 data-i18n="ack" class="section-header h3 mb-4 fw-semibold text-dark">Agradecimientos</h2>
+            <p data-i18n="ackText" class="lead mb-4">Agradecimiento especial a las instituciones y a los aportantes que contribuyen al desarrollo, validación y transferencia de PREDWEEM.</p>
 
             <div class="ack-logo-grid mb-4">
                 <a class="ack-logo-link" href="https://cerzos.conicet.gov.ar/" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio del CERZOS">
@@ -323,7 +336,7 @@
                     <img src="https://hits.sh/predweem.github.io/mis-apps.svg?view=today-total&amp;style=flat-square&amp;label=Visitas&amp;color=1a5f3f&amp;labelColor=6c757d" alt="Contador de visitas de hoy y totales de PREDWEEM">
                 </a>
             </div>
-            <small>
+            <small data-i18n="footer">
                 Mapa basado en OpenStreetMap contributors • Modelos desarrollados para apoyo en la toma de decisiones agronómicas • PREDWEEM vK4.9.15 — 2026
                 <br><strong>Aviso:</strong> PREDWEEM es una herramienta de apoyo a la toma de decisiones. No reemplaza el monitoreo a campo, el diagnóstico profesional ni la evaluación agronómica de cada lote; las decisiones de manejo deben tomarlas profesionales responsables según las condiciones locales y la normativa vigente.
                 <br><strong>Copyright © 2026 Guillermo R. Chantre / PREDWEEM.</strong> Todos los derechos reservados.
@@ -333,7 +346,9 @@
     </div>
 
     <script>
-        (() => {
+        let LANG = 'es';
+        const tr = (es, en) => (LANG === 'en' ? en : es);
+        const renderCampaign = () => {
             // Campaña: 1/01 al 1/10 de cada año (hora de Argentina).
             const partes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Argentina/Buenos_Aires', year: 'numeric', month: '2-digit', day: '2-digit' })
                 .format(new Date()).split('-').map(Number);
@@ -342,12 +357,15 @@
             const texto = document.getElementById('campaign-text');
             if (!texto) return;
             if (enCurso) {
-                texto.textContent = `Campaña ${anio} en curso (01/01 – 01/10/${anio}) · datos meteorológicos y alertas actualizados a diario`;
+                texto.textContent = tr(`Campaña ${anio} en curso (01/01 – 01/10/${anio}) · datos meteorológicos y alertas actualizados a diario`,
+                    `${anio} season in progress (01 Jan – 01 Oct ${anio}) · weather data and alerts updated daily`);
                 document.getElementById('campaign-status').classList.add('en-curso');
             } else {
-                texto.textContent = `Campaña ${anio} cerrada (01/01 – 01/10/${anio}) · las apps muestran los datos de esa campaña; la campaña ${anio + 1} comienza el 01/01/${anio + 1}`;
+                texto.textContent = tr(`Campaña ${anio} cerrada (01/01 – 01/10/${anio}) · las apps muestran los datos de esa campaña; la campaña ${anio + 1} comienza el 01/01/${anio + 1}`,
+                    `${anio} season closed (01 Jan – 01 Oct ${anio}) · the apps show data from that season; the ${anio + 1} season starts on 01 Jan ${anio + 1}`);
             }
-        })();
+        };
+        renderCampaign();
 
         const map = L.map('map', { zoomControl: true, attributionControl: true });
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -368,12 +386,15 @@
         ];
 
         const ESTADOS = {
-            ok: { color: '#16a34a', texto: 'Operativa · datos de estación al día' },
-            estimada: { color: '#f59e0b', texto: 'Operativa · datos estimados (sin estación meteorológica)' },
-            desactualizada: { color: '#ea580c', texto: 'Operativa · datos meteorológicos atrasados' },
-            caida: { color: '#dc2626', texto: 'Sin respuesta en la última verificación' },
-            desconocido: { color: '#6b7280', texto: 'Estado sin verificar' }
+            ok: { color: '#16a34a', es: 'Operativa · datos de estación al día', en: 'Running · weather-station data up to date' },
+            estimada: { color: '#f59e0b', es: 'Operativa · datos estimados (sin estación meteorológica)', en: 'Running · estimated data (no weather station)' },
+            desactualizada: { color: '#ea580c', es: 'Operativa · datos meteorológicos atrasados', en: 'Running · weather data delayed' },
+            caida: { color: '#dc2626', es: 'Sin respuesta en la última verificación', en: 'No response at the last check' },
+            desconocido: { color: '#6b7280', es: 'Estado sin verificar', en: 'Status not checked' }
         };
+        const txtEstado = (e) => tr(e.es, e.en);
+        const txtCorto = (e) => { const t = txtEstado(e).replace(/^(Operativa|Running) · /, ''); return t.charAt(0).toUpperCase() + t.slice(1); };
+        const appTitle = (t) => tr(t, t === 'App Emergencia Combinada' ? 'Combined Emergence App' : 'Emergence App');
         const iconoPin = (color) => L.divIcon({
             className: '',
             iconSize: [26, 40], iconAnchor: [13, 40], popupAnchor: [0, -34],
@@ -383,10 +404,10 @@
         const popupHtml = (loc, info) => {
             const e = ESTADOS[(info && info.estado) || 'desconocido'] || ESTADOS.desconocido;
             const datos = info && info.ultima_fecha
-                ? `<div class="estado-popup">Datos hasta ${fechaCorta(info.ultima_fecha)} · ${info.fuente} (${info.pct_observado}% observados)</div>` : '';
+                ? `<div class="estado-popup">${tr('Datos hasta', 'Data up to')} ${fechaCorta(info.ultima_fecha)} · ${info.fuente} (${info.pct_observado}% ${tr('observados', 'observed')})</div>` : '';
             return `<div class="p-3 text-center"><h5 class="mb-2">${loc.name}</h5>`
-                + `<div class="mb-2" style="color:${e.color};font-weight:600"><span class="estado-dot" style="background:${e.color}"></span> ${e.texto}</div>${datos}`
-                + `<a href="${loc.url}" target="_blank" class="btn btn-success btn-lg w-100 shadow-sm"><i class="bi bi-arrow-right-circle me-2"></i>Acceder a ${loc.title}</a></div>`;
+                + `<div class="mb-2" style="color:${e.color};font-weight:600"><span class="estado-dot" style="background:${e.color}"></span> ${txtEstado(e)}</div>${datos}`
+                + `<a href="${loc.url}" target="_blank" class="btn btn-success btn-lg w-100 shadow-sm"><i class="bi bi-arrow-right-circle me-2"></i>${tr('Acceder a', 'Open')} ${appTitle(loc.title)}</a></div>`;
         };
 
         const bounds = L.latLngBounds();
@@ -407,33 +428,141 @@
         map.fitBounds(bounds, { padding: [90, 90] });
 
         const leyenda = L.control({ position: 'bottomleft' });
+        let leyendaDiv = null;
+        const renderLeyenda = () => {
+            if (!leyendaDiv) return;
+            leyendaDiv.innerHTML = ['ok', 'estimada', 'desactualizada', 'caida']
+                .map((k) => `<div><span class="estado-dot" style="background:${ESTADOS[k].color}"></span>${txtCorto(ESTADOS[k])}</div>`).join('');
+        };
         leyenda.onAdd = () => {
-            const div = L.DomUtil.create('div', 'map-legend');
-            div.innerHTML = ['ok', 'estimada', 'desactualizada', 'caida']
-                .map((k) => `<div><span class="estado-dot" style="background:${ESTADOS[k].color}"></span>${((t) => t.charAt(0).toUpperCase() + t.slice(1))(ESTADOS[k].texto.replace('Operativa · ', ''))}</div>`).join('');
-            return div;
+            leyendaDiv = L.DomUtil.create('div', 'map-legend');
+            renderLeyenda();
+            return leyendaDiv;
+        };
+
+        let ESTADO = null;
+        const renderEstado = () => {
+            Object.entries(marcadores).forEach(([nombre, { marker, loc }]) => {
+                const info = ESTADO && ESTADO.apps && ESTADO.apps[nombre];
+                const e = ESTADOS[(info && info.estado) || 'desconocido'] || ESTADOS.desconocido;
+                marker.setIcon(iconoPin(e.color));
+                marker.setPopupContent(popupHtml(loc, info));
+                const dot = document.querySelector(`.loc-btn[data-app="${nombre}"] .estado-dot`);
+                if (dot && info) { dot.className = `estado-dot estado-${info.estado}`; dot.title = txtEstado(e); }
+            });
+            renderLeyenda();
+            if (ESTADO && ESTADO.generado) {
+                const d = new Date(ESTADO.generado);
+                const loc = tr('es-AR', 'en-GB');
+                const fecha = d.toLocaleDateString(loc);
+                const hora = d.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('estado-verificado').textContent = tr(
+                    `Estado verificado automáticamente el ${fecha} a las ${hora} (se actualiza cada 4 horas).`,
+                    `Status checked automatically on ${fecha} at ${hora} (updated every 4 hours).`);
+            }
         };
 
         fetch('estado_apps.json', { cache: 'no-store' })
             .then((r) => r.ok ? r.json() : Promise.reject(r.status))
             .then((estado) => {
-                Object.entries(marcadores).forEach(([nombre, { marker, loc }]) => {
-                    const info = estado.apps && estado.apps[nombre];
-                    const e = ESTADOS[(info && info.estado) || 'desconocido'] || ESTADOS.desconocido;
-                    marker.setIcon(iconoPin(e.color));
-                    marker.setPopupContent(popupHtml(loc, info));
-                    const dot = document.querySelector(`.loc-btn[data-app="${nombre}"] .estado-dot`);
-                    if (dot && info) { dot.className = `estado-dot estado-${info.estado}`; dot.title = e.texto; }
-                });
+                ESTADO = estado;
+                renderEstado();
                 leyenda.addTo(map);
-                if (estado.generado) {
-                    const d = new Date(estado.generado);
-                    document.getElementById('estado-verificado').textContent =
-                        `Estado verificado automáticamente el ${d.toLocaleDateString('es-AR')} a las ${d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })} (se actualiza cada 4 horas).`;
-                }
             })
             .catch(() => { document.getElementById('estado-resumen').style.display = 'none'; });
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
+
+        // ---- Traducción ES / EN ----
+        const EN = {
+            lead: `Interactive <strong>precision agriculture</strong> tool for predicting the emergence and phenology of
+                <em>Lolium multiflorum</em> (annual ryegrass).`,
+            clickHint: `Click the map markers to open the predictive app for each location.`,
+            b1: `<i class="bi bi-cpu-fill me-1"></i> Artificial Intelligence`,
+            b2: `<i class="bi bi-droplet-fill me-1"></i> Water Balance`,
+            b3: `<i class="bi bi-thermometer-sun me-1"></i> Thermal Time`,
+            b4: `<i class="bi bi-bell-fill me-1"></i> 7-Day Emergence Flush Alert`,
+            b5: `<i class="bi bi-graph-up me-1"></i> Field Validation`,
+            chooseLoc: `Or choose your location directly:`,
+            statusLegend: `
+                <span class="me-3"><span class="estado-dot estado-ok"></span> Weather-station data up to date</span>
+                <span class="me-3"><span class="estado-dot estado-estimada"></span> Estimated data (no station)</span>
+                <span class="me-3"><span class="estado-dot estado-desactualizada"></span> Delayed data</span>
+                <span><span class="estado-dot estado-caida"></span> App not responding</span>
+            `,
+            sleepNote: `<i class="bi bi-hourglass-split me-1"></i>The apps “go to sleep” when idle: the first load can take up to a minute. If you see the Streamlit start screen, wait for it to wake up.`,
+            whatIs: `What is PREDWEEM and what is it for?`,
+            whatIsText: `
+                        PREDWEEM is a tool that, from everyday weather data
+                        (maximum and minimum temperature, rainfall and date), predicts the <strong>daily</strong> emergence rate of <em>Lolium sp.</em>
+                        at a specific location. Its 2026 version (vK4.9.15) combines a neural network that estimates the onset of emergence, soil physics and plant physiology
+                        with a <strong>probabilistic 7-day emergence flush alert</strong>, validated over 17 seasons,
+                        to give precise, visual recommendations to any grower or agronomist.
+                    `,
+            how: `<i class="bi bi-lightning-charge-fill text-success me-2"></i>How does it work?`,
+            howIntro: `The program follows six simple but powerful steps:`,
+            s1t: `1. Observed and forecast weather`,
+            s1p: `Uses the SIGA–INTA weather station at each location as the primary source. Days the station has not yet published are provisionally filled with ECMWF IFS, and the following 7 days with the median (P50) of the ECMWF ENS ensemble forecast. The season runs from 1 January to 1 October.`,
+            s2t: `2. Onset of emergence with an “artificial brain”`,
+            s2p: `A neural network trained on years of historical data takes four variables (day of year, max. temperature, min. temperature and rainfall) and, together with moisture and temperature filters, estimates when the <strong>first cohort</strong> appears. This estimated onset starts the thermal clock until the date of first seedlings is reported.`,
+            s3t: `3. Soil water balance`,
+            s3p: `Calculates actual moisture in the top 10 cm according to soil cover. If the soil dries below 20 % of its capacity, emergence stops; it also detects “water shock” events (45 mm of rain in 3 days).`,
+            s4t: `4. Temperature control`,
+            s4p: `Thermo-physiological shield with a 5-day horizon and a thermal clock in degree-days (°Cd). It marks the post-emergence control window at 600 °Cd and its limit at 800 °Cd, counted from the date of first seedlings or, if not yet reported, from the onset estimated by the neural network.`,
+            s5t: `5. Validated flush alert`,
+            s5p: `A statistical model calibrated with field data combines the mean emergence calendar of 17 seasons with the response to recorded rainfall (according to soil water and temperature) to estimate the probability that ≥ 5 % of the season's emergence occurs in the next 7 days, with <strong>Watch</strong> (from 15 %) and <strong>Alert</strong> (from 25 %) levels. From 1 May to 1 October it adds a <strong>late flush</strong> warning (≥ 2 % per week). It improves when the date of first seedlings or field counts are entered.`,
+            s6t: `6. Validation with field data`,
+            s6p: `Field counts are entered as a table or an Excel/CSV sheet (one date column and one column per quadrat) and adjust the alert and the cumulative emergence curve. The alert was validated with leave-one-season-out cross-validation over 17 seasons and 97 emergence flushes.`,
+            screen: `What does the user see on screen?`,
+            sc1: `<i class="bi bi-bell-fill fs-1 text-danger mb-3 d-block"></i><strong>Flush alert</strong><br><small class="text-muted">7-day probability with Watch / Alert levels</small>`,
+            sc2: `<i class="bi bi-calendar-week fs-1 text-success mb-3 d-block"></i><strong>Weekly traffic light</strong><br><small class="text-muted">Major flushes and late flushes week by week</small>`,
+            sc3: `<i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Cumulative curve</strong><br><small class="text-muted">Expected cumulative emergence with its range (in thermal time since first seedlings) + field counts</small>`,
+            sc4: `<i class="bi bi-hourglass-split fs-1 text-warning mb-3 d-block"></i><strong>Control window</strong><br><small class="text-muted">600–800 °Cd band and thermal time accumulated since onset</small>`,
+            excel: `Downloadable Excel report with the results for the issue date`,
+            why: `Why does it matter for agriculture?`,
+            w1: `Reduces unnecessary herbicide use`,
+            w2: `Prevents escapes that drive resistance`,
+            w3: `Saves money and protects the environment`,
+            w4: `Emergence flush alerts 7 days in advance`,
+            whyText: `PREDWEEM turns a complex biological problem into clear, actionable information. It is a clear example of <strong>accessible precision agriculture</strong> for no-till systems in the Pampas.`,
+            keywords: `Keywords: emergence prediction • Lolium • flush alert • ECMWF ensemble forecast • surface water balance • thermal time • cohort validation • precision agriculture`,
+            contact: `Contact`,
+            contactText: `For enquiries, usage requests or to contribute emergence counts from your field:`,
+            ack: `Acknowledgements`,
+            ackText: `Special thanks to the institutions and contributors who support the development, validation and transfer of PREDWEEM.`,
+            footer: `
+                Map based on OpenStreetMap contributors • Models developed to support agronomic decision-making • PREDWEEM vK4.9.15 — 2026
+                <br><strong>Disclaimer:</strong> PREDWEEM is a decision-support tool. It does not replace field scouting, professional diagnosis or the agronomic assessment of each field; management decisions must be made by responsible professionals according to local conditions and current regulations.
+                <br><strong>Copyright © 2026 Guillermo R. Chantre / PREDWEEM.</strong> All rights reserved.
+                <br>Use, reproduction, modification, redistribution or commercial exploitation requires the prior written authorization of the corresponding rights holder.
+            `
+        };
+        const ES = {};
+        document.querySelectorAll('[data-i18n]').forEach((el) => { ES[el.dataset.i18n] = el.innerHTML; });
+        const TITULO_ES = document.title;
+        const TITULO_EN = 'PREDWEEM: Predictive Model of Emergence and Phenology of Lolium multiflorum';
+
+        const setLang = (lang) => {
+            LANG = lang === 'en' ? 'en' : 'es';
+            document.documentElement.lang = LANG;
+            document.title = tr(TITULO_ES, TITULO_EN);
+            document.querySelectorAll('[data-i18n]').forEach((el) => {
+                const k = el.dataset.i18n;
+                el.innerHTML = LANG === 'en' && EN[k] ? EN[k] : ES[k];
+            });
+            renderCampaign();
+            renderEstado();
+            const btn = document.getElementById('lang-switch');
+            document.getElementById('lang-label').textContent = tr('English', 'Español');
+            const etiqueta = tr('Translate to English', 'Ver en español');
+            btn.setAttribute('aria-label', etiqueta);
+            btn.title = etiqueta;
+            try { localStorage.setItem('predweem-lang', LANG); } catch (err) { /* sin almacenamiento */ }
+        };
+        document.getElementById('lang-switch').addEventListener('click', () => setLang(LANG === 'en' ? 'es' : 'en'));
+
+        let inicial = new URLSearchParams(location.search).get('lang');
+        if (!inicial) { try { inicial = localStorage.getItem('predweem-lang'); } catch (err) { inicial = null; } }
+        if (inicial === 'en') setLang('en');
     </script>
 </body>
 </html>
