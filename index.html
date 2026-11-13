@@ -210,7 +210,7 @@
                     <p data-i18n="whatIsText" class="lead text-center mb-5 fs-5">
                         PREDWEEM es una herramienta que a partir de datos climáticos cotidianos
                         (temperatura máxima y mínima, lluvia y fecha) predice <strong>día a día</strong> la tasa de emergencia de <em>Lolium sp.</em>
-                        en una localidad específica. Su versión 2026 (vK4.9.15) combina una red neuronal que estima el inicio de la emergencia, física del suelo y fisiología de las plantas
+                        en una localidad específica. Su versión 2026 (vK4.9.15) combina física del suelo, fisiología de las plantas y la fecha de primeras plántulas observada en el lote
                         con una <strong>alerta probabilística de flujos de emergencia a 7 días</strong>, validada en 17 campañas,
                         para dar recomendaciones precisas y visuales a cualquier productor o asesor.
                     </p>
@@ -229,9 +229,9 @@
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
-                                <div class="text-success mb-3"><i class="bi bi-cpu fs-1"></i></div>
-                                <h5 data-i18n="s2t" class="fw-semibold">2. Inicio de la emergencia con “cerebro artificial”</h5>
-                                <p data-i18n="s2p" class="text-muted">Una red neuronal entrenada con años de datos históricos recibe cuatro variables (día del año, T° máx., T° mín. y lluvia) y, con los filtros de humedad y temperatura, estima cuándo aparece la <strong>primera cohorte</strong>. Ese inicio estimado arranca el reloj térmico hasta que se informa la fecha de primeras plántulas.</p>
+                                <div class="text-success mb-3"><i class="bi bi-search fs-1"></i></div>
+                                <h5 data-i18n="s2t" class="fw-semibold">2. Inicio de la emergencia: se observa en el lote</h5>
+                                <p data-i18n="s2p" class="text-muted">El inicio no se estima con el clima: ninguna regla lo anticipó mejor que una fecha fija (error de 10–20 días). Mientras no se informan plántulas, un recuadro de <strong>muestreo hasta el inicio</strong> indica recorrer el lote cada semana desde el 1/02, avisa cuándo una lluvia de 20 mm o más en 5 días abre una semana para recorrer y muestra la ventana habitual del inicio (de principios de febrero a fines de marzo; mediana 28/02). La <strong>fecha de primeras plántulas</strong> arranca el reloj térmico y ancla la curva acumulada y la ventana de control.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
@@ -245,7 +245,7 @@
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-warning mb-3"><i class="bi bi-thermometer-high fs-1"></i></div>
                                 <h5 data-i18n="s4t" class="fw-semibold">4. Control de temperatura</h5>
-                                <p data-i18n="s4p" class="text-muted">Escudo termofisiológico con un horizonte de 5 días y reloj térmico en grados-día (°Cd). Marca la ventana de control post-emergente a los 600 °Cd y su límite a los 800 °Cd, contados desde la fecha de primeras plántulas o, si todavía no se informó, desde el inicio estimado por la red neuronal.</p>
+                                <p data-i18n="s4p" class="text-muted">Escudo termofisiológico con un horizonte de 5 días y reloj térmico en grados-día (°Cd). Marca la ventana de control post-emergente a los 600 °Cd y su límite a los 800 °Cd, contados desde la fecha de primeras plántulas informada en el lote; hasta entonces no se calcula.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
@@ -494,7 +494,7 @@
             whatIsText: `
                         PREDWEEM is a tool that, from everyday weather data
                         (maximum and minimum temperature, rainfall and date), predicts the <strong>daily</strong> emergence rate of <em>Lolium sp.</em>
-                        at a specific location. Its 2026 version (vK4.9.15) combines a neural network that estimates the onset of emergence, soil physics and plant physiology
+                        at a specific location. Its 2026 version (vK4.9.15) combines soil physics, plant physiology and the date of first seedlings observed in the field
                         with a <strong>probabilistic 7-day emergence flush alert</strong>, validated over 17 seasons,
                         to give precise, visual recommendations to any grower or agronomist.
                     `,
@@ -502,12 +502,12 @@
             howIntro: `The program follows six simple but powerful steps:`,
             s1t: `1. Observed and forecast weather`,
             s1p: `Uses the SIGA–INTA weather station at each location as the primary source. Days the station has not yet published are provisionally filled with ECMWF IFS, and the following 7 days with the median (P50) of the ECMWF ENS ensemble forecast. The season runs from 1 January to 1 October.`,
-            s2t: `2. Onset of emergence with an “artificial brain”`,
-            s2p: `A neural network trained on years of historical data takes four variables (day of year, max. temperature, min. temperature and rainfall) and, together with moisture and temperature filters, estimates when the <strong>first cohort</strong> appears. This estimated onset starts the thermal clock until the date of first seedlings is reported.`,
+            s2t: `2. Onset of emergence: observed in the field`,
+            s2p: `Onset is not estimated from weather: no rule predicted it better than a fixed date (error of 10–20 days). Until seedlings are reported, a <strong>scouting until onset</strong> box advises scouting the field weekly from 1 February, flags when 20 mm or more of rain in 5 days opens a week to scout, and shows the usual onset window (early February to late March; median 28 February). The <strong>date of first seedlings</strong> starts the thermal clock and anchors the cumulative curve and the control window.`,
             s3t: `3. Soil water balance`,
             s3p: `Calculates actual moisture in the top 10 cm according to soil cover. If the soil dries below 20 % of its capacity, emergence stops; it also detects “water shock” events (45 mm of rain in 3 days).`,
             s4t: `4. Temperature control`,
-            s4p: `Thermo-physiological shield with a 5-day horizon and a thermal clock in degree-days (°Cd). It marks the post-emergence control window at 600 °Cd and its limit at 800 °Cd, counted from the date of first seedlings or, if not yet reported, from the onset estimated by the neural network.`,
+            s4p: `Thermo-physiological shield with a 5-day horizon and a thermal clock in degree-days (°Cd). It marks the post-emergence control window at 600 °Cd and its limit at 800 °Cd, counted from the date of first seedlings reported for the field; until then it is not calculated.`,
             s5t: `5. Validated flush alert`,
             s5p: `A statistical model calibrated with field data combines the mean emergence calendar of 17 seasons with the response to recorded rainfall (according to soil water and temperature) to estimate the probability that ≥ 5 % of the season's emergence occurs in the next 7 days, with <strong>Watch</strong> (from 15 %) and <strong>Alert</strong> (from 25 %) levels. From 1 May to 1 October it adds a <strong>late flush</strong> warning (≥ 2 % per week). It improves when the date of first seedlings or field counts are entered.`,
             s6t: `6. Validation with field data`,
