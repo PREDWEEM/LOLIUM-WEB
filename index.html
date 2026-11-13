@@ -54,14 +54,6 @@
             gap: 2rem;
         }
         .header-brand .logo-img { flex: 0 1 650px; width: 100%; min-width: 0; }
-        .header-inst { flex: 0 0 130px; width: 130px; display: block; }
-        .header-inst img {
-            width: 100%;
-            height: 130px;
-            object-fit: contain;
-            transition: transform .25s ease;
-        }
-        .header-inst:hover img { transform: translateY(-3px); }
         .campaign-status.en-curso { background: #ecfdf5; color: #166534; border-color: #bbf7d0; }
         .campaign-status {
             display: inline-flex; align-items: center; gap: .5rem;
@@ -143,9 +135,6 @@
         }
         @media (max-width: 576px) {
             .logo-img { max-width: 380px; }
-            .header-brand { gap: .6rem; }
-            .header-inst { flex-basis: 56px; width: 56px; }
-            .header-inst img { height: 56px; }
             #map { height: 65vh; }
             .ack-logo-link { min-height: 155px; }
             .ack-logo { max-height: 125px; }
@@ -156,13 +145,7 @@
     <div class="container py-5">
         <header class="text-center mb-5">
             <div class="header-brand mb-4">
-                <a class="header-inst" href="https://cerzos.conicet.gov.ar/" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio del CERZOS">
-                    <img src="cerzos.jpg" alt="Logo CERZOS CONICET UNS">
-                </a>
                 <img src="logo.png" alt="PREDWEEM by Guillermo R. Chantre" class="img-fluid logo-img">
-                <a class="header-inst" href="https://www.uns.edu.ar/" target="_blank" rel="noopener noreferrer" aria-label="Abrir sitio de la Universidad Nacional del Sur">
-                    <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/EmblemaUNS.jpg" alt="Logo de la Universidad Nacional del Sur">
-                </a>
             </div>
             <p class="lead col-lg-9 mx-auto fs-4 text-dark">
                 Herramienta interactiva de <strong>agricultura de precisión</strong> para la predicción de emergencia y fenología de
