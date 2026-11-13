@@ -252,7 +252,7 @@
                             <div class="step-card card h-100 border-0 shadow-sm p-4">
                                 <div class="text-danger mb-3"><i class="bi bi-bell fs-1"></i></div>
                                 <h5 data-i18n="s5t" class="fw-semibold">5. Alerta validada de flujos</h5>
-                                <p data-i18n="s5p" class="text-muted">Un modelo estadístico calibrado con datos de campo combina el calendario medio de emergencia de 17 campañas y la respuesta a las lluvias registradas (según el agua y la temperatura del suelo) para estimar la probabilidad de que en los próximos 7 días emerja ≥ 5 % de la campaña, con niveles <strong>Atención</strong> (desde 15 %) y <strong>Alerta</strong> (desde 25 %). Del 1/05 al 1/10 suma un aviso de <strong>flujos tardíos</strong> (≥ 2 % semanal). Mejora al cargar la fecha de primeras plántulas o los conteos del lote.</p>
+                                <p data-i18n="s5p" class="text-muted">Un modelo estadístico calibrado con datos de campo combina el calendario medio de emergencia de 17 campañas y la respuesta a las lluvias registradas (según el agua y la temperatura del suelo) para estimar la probabilidad de que en los próximos 7 días emerja ≥ 5 % de la campaña, con niveles <strong>Atención</strong> (desde 15 %) y <strong>Alerta</strong> (desde 25 %). Del 1/05 al 30/06 suma un aviso de <strong>flujos tardíos</strong> (≥ 2 % semanal), que indica si en el sitio suelen darse; de julio a septiembre recomienda recorrer el lote cada 2 semanas, porque ahí el modelo no los anticipa. Mejora al cargar la fecha de primeras plántulas o los conteos del lote.</p>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4">
@@ -271,6 +271,7 @@
                         <div class="col-6 col-lg"><div data-i18n="sc2" class="p-3"><i class="bi bi-calendar-week fs-1 text-success mb-3 d-block"></i><strong>Semáforo semanal</strong><br><small class="text-muted">Grandes flujos y flujos tardíos semana a semana</small></div></div>
                         <div class="col-6 col-lg"><div data-i18n="sc3" class="p-3"><i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Curva acumulada</strong><br><small class="text-muted">Emergencia acumulada esperada con su rango (en tiempo térmico desde las primeras plántulas) + conteos del lote</small></div></div>
                         <div class="col-6 col-md-6 col-lg"><div data-i18n="sc4" class="p-3"><i class="bi bi-hourglass-split fs-1 text-warning mb-3 d-block"></i><strong>Ventana de control</strong><br><small class="text-muted">Franja 600–800 °Cd y tiempo térmico acumulado desde el inicio</small></div></div>
+                        <div class="col-12 col-md-6 col-lg"><div data-i18n="sc5" class="p-3"><i class="bi bi-shield-check fs-1 text-primary mb-3 d-block"></i><strong>Residual a la siembra</strong><br><small class="text-muted">Riesgo de nacimientos de 10 días antes a 45 días después de la fecha de siembra prevista, en plantas/m², con recomendación</small></div></div>
                     </div>
                     <p data-i18n="excel" class="text-center text-muted mt-3">Reporte Excel descargable con los resultados de la fecha de emisión</p>
 
@@ -509,7 +510,7 @@
             s4t: `4. Temperature control`,
             s4p: `Thermo-physiological shield with a 5-day horizon and a thermal clock in degree-days (°Cd). It marks the post-emergence control window at 600 °Cd and its limit at 800 °Cd, counted from the date of first seedlings reported for the field; until then it is not calculated.`,
             s5t: `5. Validated flush alert`,
-            s5p: `A statistical model calibrated with field data combines the mean emergence calendar of 17 seasons with the response to recorded rainfall (according to soil water and temperature) to estimate the probability that ≥ 5 % of the season's emergence occurs in the next 7 days, with <strong>Watch</strong> (from 15 %) and <strong>Alert</strong> (from 25 %) levels. From 1 May to 1 October it adds a <strong>late flush</strong> warning (≥ 2 % per week). It improves when the date of first seedlings or field counts are entered.`,
+            s5p: `A statistical model calibrated with field data combines the mean emergence calendar of 17 seasons with the response to recorded rainfall (according to soil water and temperature) to estimate the probability that ≥ 5 % of the season's emergence occurs in the next 7 days, with <strong>Watch</strong> (from 15 %) and <strong>Alert</strong> (from 25 %) levels. From 1 May to 30 June it adds a <strong>late flush</strong> warning (≥ 2 % per week), which shows whether they usually occur at the site; from July to September it recommends scouting the field every 2 weeks, because the model does not anticipate them then. It improves when the date of first seedlings or field counts are entered.`,
             s6t: `6. Validation with field data`,
             s6p: `Field counts are entered as a table or an Excel/CSV sheet (one date column and one column per quadrat) and adjust the alert and the cumulative emergence curve. The alert was validated with leave-one-season-out cross-validation over 17 seasons and 97 emergence flushes.`,
             screen: `What does the user see on screen?`,
@@ -517,6 +518,7 @@
             sc2: `<i class="bi bi-calendar-week fs-1 text-success mb-3 d-block"></i><strong>Weekly traffic light</strong><br><small class="text-muted">Major flushes and late flushes week by week</small>`,
             sc3: `<i class="bi bi-graph-up-arrow fs-1 text-success mb-3 d-block"></i><strong>Cumulative curve</strong><br><small class="text-muted">Expected cumulative emergence with its range (in thermal time since first seedlings) + field counts</small>`,
             sc4: `<i class="bi bi-hourglass-split fs-1 text-warning mb-3 d-block"></i><strong>Control window</strong><br><small class="text-muted">600–800 °Cd band and thermal time accumulated since onset</small>`,
+            sc5: `<i class="bi bi-shield-check fs-1 text-primary mb-3 d-block"></i><strong>Residual at sowing</strong><br><small class="text-muted">Risk of seedling emergence from 10 days before to 45 days after the planned sowing date, in plants/m², with a recommendation</small>`,
             excel: `Downloadable Excel report with the results for the issue date`,
             why: `Why does it matter for agriculture?`,
             w1: `Reduces unnecessary herbicide use`,
