@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-15T06:32:29+00:00",
+  "generado": "2026-11-15T15:40:35+00:00",
   "fecha_esperada": "2026-10-01",
   "apps": {
     "Bordenave": {
@@ -58,12 +58,12 @@
     },
     "Olavarría": {
       "repo": "PREDWEEM/LOLIUM_OLAVA2026",
-      "app_responde": true,
+      "app_responde": false,
       "ultima_fecha": "2026-10-01",
       "dias": 274,
       "pct_observado": 0,
       "fuente": "reanálisis ERA5",
-      "estado": "estimada"
+      "estado": "caida"
     },
     "Lartigau": {
       "repo": "PREDWEEM/LOLIUM_LARTIGAU-2026",
