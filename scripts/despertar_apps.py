@@ -1,4 +1,4 @@
-"""Mantiene despiertas las apps Streamlit enlazadas en el mapa de index.html.
+"""Mantiene despiertas las apps Streamlit enlazadas en el mapa de index.html y la web de prueba de localidades.
 
 Uso:
   python scripts/despertar_apps.py --listar        -> JSON con [{"nombre", "url"}] (para la matriz del workflow)
@@ -32,6 +32,12 @@ def listar_apps() -> list[dict[str, str]]:
     ]
     if not apps:
         raise SystemExit("No se encontraron apps en index.html.")
+    # web de prueba de localidades, enlazada desde localidades.html (constante APP_LOCALIDADES)
+    explorador = INDEX.with_name("localidades.html")
+    if explorador.is_file():
+        m = re.search(r"const APP_LOCALIDADES = '(https://[^']+)'", explorador.read_text(encoding="utf-8"))
+        if m:
+            apps.append({"nombre": "Otras localidades (prueba)", "url": m.group(1), "slug": "otras-localidades"})
     return apps
 
 
