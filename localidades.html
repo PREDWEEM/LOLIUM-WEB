@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREDWEEM: explorador de localidades</title>
+    <link rel="icon" href="icono_16x16.ico">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root { --primary-green: #1a5f3f; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: linear-gradient(180deg, #f8f9fa 0%, #f1f5f3 100%); color: #222; }
+        h1, h2, h3 { color: var(--primary-green); }
+        #mapa { height: 68vh; min-height: 420px; width: 100%; border-radius: 16px; border: 1px solid rgba(26,95,63,.15);
+                box-shadow: 0 12px 30px rgba(26,95,63,.12); cursor: crosshair; }
+        .tarjeta { background: #fff; border-radius: 16px; border: 1px solid rgba(26,95,63,.12); box-shadow: 0 8px 24px rgba(26,95,63,.08); }
+        .leaflet-tooltip.etq { background: rgba(255,255,255,.95); border: none; box-shadow: 0 2px 8px rgba(0,0,0,.15); font-size: 12px;
+                               font-weight: 600; color: var(--primary-green); padding: 2px 8px; }
+        .leaflet-tooltip.etq::before { display: none; }
+        .leyenda span.punto { display: inline-block; width: .7rem; height: .7rem; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; }
+        .btn-verde { background: var(--primary-green); color: #fff; border: none; }
+        .btn-verde:hover { background: #134a30; color: #fff; }
+        table.clima td, table.clima th { font-size: .88rem; white-space: nowrap; }
+        tr.nuevo td { font-weight: 600; background: #fef2f2; }
+        .aviso { font-size: .9rem; }
+        #lang-switch { position: absolute; top: 1rem; right: 1rem; }
+    </style>
+</head>
+<body>
+<div class="container py-4 position-relative">
+    <button id="lang-switch" class="btn btn-sm btn-outline-success" type="button"><i class="bi bi-translate me-1"></i><span id="lang-label">English</span></button>
+    <a href="index.html" class="text-decoration-none small" data-t="volver"><i class="bi bi-arrow-left me-1"></i>Volver a PREDWEEM</a>
+    <h1 class="h2 fw-semibold mt-2 mb-1" data-t="titulo">Explorador de localidades</h1>
+    <p class="text-muted mb-4" data-t="intro">Elegí cualquier punto con doble clic en el mapa para ver qué tan cerca está de los sitios calibrados,
+        comparar su clima con el de esos sitios y abrir la alerta de emergencia de <em>Lolium</em> en ese punto con la calibración regional.</p>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div id="mapa"></div>
+            <p class="small text-muted mt-2 mb-1" data-t="ayudaMapa">Arrastrá para moverte · rueda o botones +/− para el zoom · <b>doble clic</b> para elegir el punto.</p>
+            <p class="small leyenda mb-0">
+                <span class="me-3"><span class="punto" style="background:#1a5f3f"></span><span data-t="leySitios">Apps calibradas</span></span>
+                <span class="me-3"><span class="punto" style="background:#2563eb"></span><span data-t="leyPrueba">Localidades de prueba</span></span>
+                <span><span class="punto" style="background:#dc2626"></span><span data-t="leyPunto">Punto elegido</span></span>
+            </p>
+        </div>
+        <div class="col-lg-4">
+            <div class="tarjeta p-4">
+                <h2 class="h5 fw-semibold" data-t="tPunto">1. Punto elegido</h2>
+                <label class="form-label small mb-1" for="nombre" data-t="nombre">Nombre (opcional)</label>
+                <input id="nombre" class="form-control form-control-sm mb-2" placeholder="p. ej. Coronel Pringles">
+                <div class="row g-2 mb-2">
+                    <div class="col"><label class="form-label small mb-1" for="lat" data-t="lat">Latitud</label>
+                        <input id="lat" type="number" step="0.0001" class="form-control form-control-sm"></div>
+                    <div class="col"><label class="form-label small mb-1" for="lon" data-t="lon">Longitud</label>
+                        <input id="lon" type="number" step="0.0001" class="form-control form-control-sm"></div>
+                </div>
+                <div id="cercano" class="small text-muted" data-t="sinPunto">Hacé doble clic en el mapa para elegir un punto.</div>
+                <div id="avisoDist" class="alert alert-warning aviso py-2 px-3 mt-2 mb-0 d-none"></div>
+
+                <h2 class="h5 fw-semibold mt-4" data-t="tClima">2. Clima comparado</h2>
+                <div class="d-flex gap-2 align-items-center mb-2">
+                    <label class="small" for="anio" data-t="campania">Campaña</label>
+                    <select id="anio" class="form-select form-select-sm w-auto"></select>
+                    <button id="btnClima" class="btn btn-sm btn-outline-success" type="button" disabled data-t="revisar">Revisar el clima</button>
+                </div>
+                <div id="estadoClima" class="small text-muted"></div>
+
+                <h2 class="h5 fw-semibold mt-4" data-t="tAlerta">3. Alerta en este punto</h2>
+                <a id="btnAlerta" class="btn btn-verde btn-sm w-100 mb-2 disabled" target="_blank" rel="noopener noreferrer" data-t="verAlerta">
+                    <i class="bi bi-bell-fill me-1"></i>Ver la alerta en este punto</a>
+                <p id="notaAlerta" class="small text-muted mb-0"></p>
+
+                <h2 class="h5 fw-semibold mt-4" data-t="tSugerir">4. Sugerir la localidad</h2>
+                <p class="small text-muted mb-2" data-t="sugerirTxt">Si te interesa que este punto quede como localidad de la web, sugerilo:
+                    lo revisamos y, si hay conteos de plántulas, lo validamos.</p>
+                <div class="d-flex gap-2">
+                    <a id="btnIssue" class="btn btn-sm btn-outline-secondary disabled" target="_blank" rel="noopener noreferrer"><i class="bi bi-github me-1"></i>GitHub</a>
+                    <a id="btnMail" class="btn btn-sm btn-outline-secondary disabled"><i class="bi bi-envelope me-1"></i><span data-t="correo">Correo</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tarjeta p-4 mt-4" id="resultadoClima" hidden>
+        <h2 class="h5 fw-semibold" data-t="tTabla">Clima de febrero a abril</h2>
+        <p class="small text-muted" id="fuenteClima"></p>
+        <div class="table-responsive"><table class="table table-sm clima mb-2"><thead><tr>
+            <th data-t="lugar">Lugar</th><th class="text-end" data-t="tmed">Temp. media (°C)</th><th class="text-end" data-t="lluvia">Lluvia (mm)</th>
+            <th class="text-end" data-t="pulsos">Días con ≥ 20 mm en 5 días</th><th data-t="fuente">Fuente</th></tr></thead><tbody id="tablaClima"></tbody></table></div>
+        <div id="veredicto" class="aviso"></div>
+    </div>
+
+    <div class="tarjeta p-4 mt-4">
+        <h2 class="h5 fw-semibold" data-t="tFiab">¿Qué tan fiable es en otra localidad?</h2>
+        <ul class="small mb-0" data-t="fiab">
+            <li><b>Alerta semanal de grandes flujos:</b> fiable para ordenar las semanas por riesgo dentro de la región calibrada
+                (AUC 0,89–0,93 en sitios donde no se calibró), sobre todo cargando la fecha de primeras plántulas.</li>
+            <li><b>Inicio de la emergencia:</b> no se puede anticipar (error de 11–12 días); hay que recorrer el lote.</li>
+            <li><b>Curva acumulada y residual:</b> orientativos; el residual en plantas/m² depende de la infestación del lote.</li>
+            <li><b>Fuera del rango de clima de los sitios calibrados</b> o lejos de ellos, la alerta es una extrapolación.
+                El clima es de reanálisis (ERA5-Land/ERA5) y pronóstico ECMWF, no de estación meteorológica.</li>
+        </ul>
+    </div>
+    <p class="small text-muted mt-3">Copyright © 2026 Guillermo R. Chantre / PREDWEEM. Clima: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (ERA5, Copernicus). Mapa: © OpenStreetMap.</p>
+</div>
+
+<script>
+// ------------------------------------------------------------------ configuración
+// Web de prueba multi-localidad (Streamlit). Completar con su dirección al publicarla; vacía = botón deshabilitado.
+const APP_LOCALIDADES = '';
+const REPO_LOCALIDADES = 'PREDWEEM/LOLIUM-LOCALIDADES';
+const CORREO = 'chantreguillermo@gmail.com';
+const SITIOS = [
+    { nombre: 'Bordenave', lat: -37.7617, lon: -63.0837, url: 'https://appemergenciacombinadopy-pft4j4e33dvonn4jsryzte.streamlit.app/' },
+    { nombre: 'Lartigau', lat: -38.6166, lon: -61.70, url: 'https://appemergenciapy-jzgoddqgjrranj8kk5wokn.streamlit.app/' },
+    { nombre: 'Tres Arroyos', lat: -38.45, lon: -60.2763, url: 'https://appemergenciapy-evagabxskaw7cqvwex2d3k.streamlit.app/' },
+    { nombre: 'Azul', lat: -36.87, lon: -59.89, url: 'https://appemergenciacombinadopy-a5e2avvvuf3opkb55cwi5v.streamlit.app/' },
+    { nombre: 'Olavarría', lat: -36.8799, lon: -60.216, url: 'https://appemergenciacombinadopy-bxr8ukzuet49zn7yfjyqhr.streamlit.app/' },
+    { nombre: 'Balcarce', lat: -37.7664, lon: -58.2999, url: 'https://appemergenciacombinadopy-a5mxrfx78y2hedmzqsy4bx.streamlit.app/' },
+    { nombre: 'Pergamino', lat: -33.9443, lon: -60.5745, url: 'https://appemergenciacombinadopy-zybjv3zntwavn8omppk9ba.streamlit.app/' },
+    { nombre: 'San Pedro', lat: -33.7328, lon: -59.7965, url: 'https://appemergenciapy-rcr8vp23hogconk5efz374.streamlit.app/' }
+];
+
+// ------------------------------------------------------------------ idioma
+const EN = {
+    volver: '<i class="bi bi-arrow-left me-1"></i>Back to PREDWEEM', titulo: 'Location explorer',
+    intro: 'Double-click any point on the map to see how close it is to the calibrated sites, compare its climate with theirs and open the <em>Lolium</em> emergence alert at that point with the regional calibration.',
+    ayudaMapa: 'Drag to move · scroll wheel or +/− buttons to zoom · <b>double-click</b> to choose the point.',
+    leySitios: 'Calibrated apps', leyPrueba: 'Test locations', leyPunto: 'Chosen point', tPunto: '1. Chosen point', nombre: 'Name (optional)',
+    lat: 'Latitude', lon: 'Longitude', sinPunto: 'Double-click on the map to choose a point.', tClima: '2. Climate comparison', campania: 'Season',
+    revisar: 'Check climate', tAlerta: '3. Alert at this point', verAlerta: '<i class="bi bi-bell-fill me-1"></i>Open the alert at this point',
+    tSugerir: '4. Suggest the location', sugerirTxt: 'If you want this point to become a location of the website, suggest it: we will review it and, if there are seedling counts, validate it.',
+    correo: 'Email', tTabla: 'February–April climate', lugar: 'Place', tmed: 'Mean temp. (°C)', lluvia: 'Rain (mm)', pulsos: 'Days with ≥ 20 mm in 5 days', fuente: 'Source',
+    tFiab: 'How reliable is it at another location?',
+    fiab: '<li><b>Weekly large-flush alert:</b> reliable for ranking weeks by risk within the calibrated region (AUC 0.89–0.93 at sites not used for calibration), especially when the first-seedling date is entered.</li><li><b>Emergence onset:</b> cannot be anticipated (11–12 days error); fields must be scouted.</li><li><b>Cumulative curve and residual:</b> indicative only; residual plants/m² depend on the field infestation.</li><li><b>Outside the climate range of the calibrated sites</b> or far from them, the alert is an extrapolation. Weather is reanalysis (ERA5-Land/ERA5) and ECMWF forecast, not weather-station data.</li>'
+};
+const ES = {};
+document.querySelectorAll('[data-t]').forEach(el => { ES[el.dataset.t] = el.innerHTML; });
+let LANG = 'es';
+const tr = (es, en) => LANG === 'en' ? en : es;
+const setLang = (l) => {
+    LANG = l === 'en' ? 'en' : 'es';
+    document.documentElement.lang = LANG;
+    document.querySelectorAll('[data-t]').forEach(el => { const k = el.dataset.t; el.innerHTML = LANG === 'en' && EN[k] ? EN[k] : ES[k]; });
+    document.getElementById('lang-label').textContent = tr('English', 'Español');
+    try { localStorage.setItem('predweem-lang', LANG); } catch (e) { /* sin almacenamiento */ }
+    actualizarPunto(false);
+};
+document.getElementById('lang-switch').addEventListener('click', () => setLang(LANG === 'en' ? 'es' : 'en'));
+
+// ------------------------------------------------------------------ mapa
+const mapa = L.map('mapa', { doubleClickZoom: false }).setView([-36.6, -60.8], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '© OpenStreetMap' }).addTo(mapa);
+SITIOS.forEach(s => L.circleMarker([s.lat, s.lon], { radius: 8, color: '#0f3d28', weight: 1.5, fillColor: '#1a5f3f', fillOpacity: .95 })
+    .bindTooltip(s.nombre, { permanent: true, direction: 'right', offset: [9, 0], className: 'etq' })
+    .bindPopup(`<div class="p-2"><b>${s.nombre}</b><br><a href="${s.url}" target="_blank" rel="noopener">${tr('Abrir la app', 'Open the app')}</a></div>`)
+    .addTo(mapa));
+fetch(`https://raw.githubusercontent.com/${REPO_LOCALIDADES}/main/localidades.json`).then(r => r.ok ? r.json() : null).then(d => {
+    (d && d.localidades || []).forEach(x => {
+        const m = L.circleMarker([x.lat, x.lon], { radius: 7, color: '#1e3a8a', weight: 1.5, fillColor: '#2563eb', fillOpacity: .9 })
+            .bindTooltip(x.nombre, { permanent: true, direction: 'right', offset: [9, 0], className: 'etq' }).addTo(mapa);
+        if (APP_LOCALIDADES) m.bindPopup(`<div class="p-2"><b>${x.nombre}</b><br><a href="${APP_LOCALIDADES}?loc=${encodeURIComponent(x.id)}" target="_blank" rel="noopener">${tr('Ver la alerta', 'Open the alert')}</a></div>`);
+    });
+}).catch(() => {});
+
+let marca = null;
+const $ = (id) => document.getElementById(id);
+const distKm = (a, b, c, d) => { const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)); };
+const valido = (lat, lon) => isFinite(lat) && isFinite(lon) && lat >= -55 && lat <= -21 && lon >= -74 && lon <= -53;
+
+function elegir(lat, lon) {
+    $('lat').value = lat.toFixed(4); $('lon').value = lon.toFixed(4);
+    actualizarPunto(true);
+}
+mapa.on('dblclick', e => elegir(e.latlng.lat, e.latlng.lng));
+['lat', 'lon'].forEach(id => $(id).addEventListener('change', () => actualizarPunto(true)));
+$('nombre').addEventListener('input', () => actualizarPunto(false));
+
+function actualizarPunto(moverMarca) {
+    const lat = parseFloat($('lat').value), lon = parseFloat($('lon').value), nombre = $('nombre').value.trim();
+    const ok = valido(lat, lon);
+    ['btnClima'].forEach(id => $(id).disabled = !ok);
+    ['btnIssue', 'btnMail'].forEach(id => $(id).classList.toggle('disabled', !ok));
+    if (!ok) { $('cercano').innerHTML = tr('Hacé doble clic en el mapa para elegir un punto.', 'Double-click on the map to choose a point.'); $('btnAlerta').classList.add('disabled'); return; }
+    if (moverMarca) {
+        if (marca) mapa.removeLayer(marca);
+        marca = L.circleMarker([lat, lon], { radius: 10, color: '#7f1d1d', weight: 2, fillColor: '#dc2626', fillOpacity: .95 })
+            .bindTooltip(`${nombre || tr('Punto elegido', 'Chosen point')}<br>${lat.toFixed(4)}, ${lon.toFixed(4)}`).addTo(mapa);
+        $('resultadoClima').hidden = true; $('estadoClima').textContent = '';
+    }
+    const c = SITIOS.map(s => ({ s, d: distKm(lat, lon, s.lat, s.lon) })).sort((a, b) => a.d - b.d)[0];
+    $('cercano').innerHTML = tr(`Sitio calibrado más cercano: <b>${c.s.nombre}</b>, a ${c.d.toFixed(0)} km.`,
+                                `Nearest calibrated site: <b>${c.s.nombre}</b>, ${c.d.toFixed(0)} km away.`);
+    const lejos = c.d > 150;
+    $('avisoDist').classList.toggle('d-none', !lejos);
+    $('avisoDist').innerHTML = lejos ? tr('A más de 150 km del sitio calibrado más cercano: la alerta sería una extrapolación de la calibración regional.',
+                                         'More than 150 km from the nearest calibrated site: the alert would be an extrapolation of the regional calibration.') : '';
+    // alerta en la web de prueba
+    const q = `?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&nombre=${encodeURIComponent(nombre || tr('Punto elegido', 'Chosen point'))}`;
+    if (APP_LOCALIDADES) { $('btnAlerta').href = APP_LOCALIDADES + q; $('btnAlerta').classList.remove('disabled');
+        $('notaAlerta').textContent = tr('Se abre en la web de prueba con la calibración regional. La primera carga puede demorar hasta un minuto.',
+                                         'Opens in the test web app with the regional calibration. The first load can take up to a minute.'); }
+    else { $('btnAlerta').classList.add('disabled');
+        $('notaAlerta').textContent = tr('Disponible cuando se publique la web de prueba de localidades.', 'Available once the test web app is published.'); }
+    // sugerencias
+    const entrada = { nombre: nombre || '(sin nombre)', lat: +lat.toFixed(4), lon: +lon.toFixed(4), sitio_calibrado_cercano: c.s.nombre, distancia_km: Math.round(c.d) };
+    const cuerpo = `Sugerencia desde el explorador de localidades de la web.\n\n\`\`\`json\n${JSON.stringify(entrada, null, 2)}\n\`\`\`\n\n¿Hay conteos de plántulas en este lugar? (fechas y plantas/m²):\n`;
+    $('btnIssue').href = `https://github.com/${REPO_LOCALIDADES}/issues/new?title=${encodeURIComponent('Sugerencia de localidad: ' + entrada.nombre)}&body=${encodeURIComponent(cuerpo)}`;
+    $('btnMail').href = `mailto:${CORREO}?subject=${encodeURIComponent('PREDWEEM: sugerencia de localidad ' + entrada.nombre)}&body=${encodeURIComponent(cuerpo)}`;
+}
+
+// ------------------------------------------------------------------ clima (Open-Meteo, desde el navegador)
+const hoy = new Date();
+[hoy.getFullYear(), hoy.getFullYear() - 1, hoy.getFullYear() - 2].forEach(a => $('anio').insertAdjacentHTML('beforeend', `<option>${a}</option>`));
+const ISO = (d) => d.toISOString().slice(0, 10);
+const esperar = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function pedir(params) {
+    const url = 'https://archive-api.open-meteo.com/v1/archive?' + new URLSearchParams(params);
+    for (let i = 0; i < 4; i++) {
+        const r = await fetch(url);
+        if (r.status === 429 && i < 3) { await esperar(5000 * 2 ** i); continue; }
+        if (r.status === 429) throw new Error(tr('Open-Meteo pidió esperar: probá de nuevo en un minuto.', 'Open-Meteo asked to wait: try again in a minute.'));
+        if (!r.ok) throw new Error(`Open-Meteo ${r.status}`);
+        return r.json();
+    }
+}
+
+// días [{f, tmax, tmin, p}] completos (sin huecos) de un modelo: diario y, si viene vacío, desde los horarios
+async function dias(lat, lon, ini, fin, modelo) {
+    const base = { latitude: lat, longitude: lon, start_date: ini, end_date: fin, timezone: 'America/Argentina/Buenos_Aires', models: modelo, cell_selection: 'land' };
+    const d = (await pedir({ ...base, daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum' })).daily || {};
+    let out = (d.time || []).map((f, i) => ({ f, tmax: d.temperature_2m_max[i], tmin: d.temperature_2m_min[i], p: d.precipitation_sum[i] }))
+        .filter(x => x.tmax != null && x.tmin != null && x.p != null);
+    if (out.length) return out;
+    const h = (await pedir({ ...base, hourly: 'temperature_2m,precipitation' })).hourly || {};
+    const g = {};
+    (h.time || []).forEach((t, i) => { const f = t.slice(0, 10); (g[f] = g[f] || []).push([h.temperature_2m[i], h.precipitation[i]]); });
+    return Object.entries(g).filter(([, v]) => v.length === 24 && v.every(([a, b]) => a != null && b != null))
+        .map(([f, v]) => ({ f, tmax: Math.max(...v.map(x => x[0])), tmin: Math.min(...v.map(x => x[0])), p: v.reduce((s, x) => s + x[1], 0) }));
+}
+
+async function febAbr(lat, lon, anio) {
+    const clave = `predweem-om-${lat.toFixed(3)}-${lon.toFixed(3)}-${anio}`;
+    try { const c = JSON.parse(localStorage.getItem(clave)); if (c && (anio < hoy.getFullYear() || Date.now() - c.t < 864e5)) return c.v; } catch (e) { /* */ }
+    const ini = `${anio}-01-27`, ayer = new Date(Date.now() - 864e5), fin = ISO(new Date(Math.min(new Date(`${anio}-04-30T12:00:00`), ayer)));
+    if (fin < `${anio}-02-01`) return null;
+    const n = Math.round((new Date(fin) - new Date(ini)) / 864e5) + 1;
+    let mejor = null, fuente = null;
+    for (const m of ['era5_land', 'era5']) {
+        const ds = await dias(lat, lon, ini, fin, m);
+        if (!mejor || ds.length > mejor.length) { mejor = ds; fuente = m.toUpperCase().replace('_', '-'); }
+        if (ds.length >= Math.max(1, n - 12)) break;
+    }
+    if (!mejor || !mejor.length) return null;
+    const p = mejor.map(x => x.p);
+    const desde = mejor.findIndex(x => x.f >= `${anio}-02-01`);
+    const sel = mejor.slice(desde);
+    let pulsos = 0;
+    for (let i = desde; i < mejor.length; i++) if (i >= 4 && p.slice(i - 4, i + 1).reduce((a, b) => a + b, 0) >= 20) pulsos++;
+    const v = { tmed: sel.reduce((s, x) => s + (x.tmax + x.tmin) / 2, 0) / sel.length, lluvia: sel.reduce((s, x) => s + x.p, 0), pulsos, fuente, hasta: sel[sel.length - 1].f };
+    try { localStorage.setItem(clave, JSON.stringify({ t: Date.now(), v })); } catch (e) { /* */ }
+    return v;
+}
+
+$('btnClima').addEventListener('click', async () => {
+    const lat = parseFloat($('lat').value), lon = parseFloat($('lon').value), anio = +$('anio').value, nombre = $('nombre').value.trim();
+    if (!valido(lat, lon)) return;
+    $('btnClima').disabled = true; $('resultadoClima').hidden = true;
+    const lugares = [{ nombre: nombre || tr('Punto elegido', 'Chosen point'), lat, lon, nuevo: true }, ...SITIOS];
+    const filas = [];
+    try {
+        for (const [i, l] of lugares.entries()) {
+            $('estadoClima').textContent = tr(`Bajando febrero a abril de ${anio}… (${i + 1}/${lugares.length})`, `Downloading February–April ${anio}… (${i + 1}/${lugares.length})`);
+            filas.push({ ...l, v: await febAbr(l.lat, l.lon, anio) });
+        }
+    } catch (e) {
+        $('estadoClima').textContent = tr('No se pudo bajar el clima: ', 'Could not download the climate: ') + e.message;
+        $('btnClima').disabled = false; return;
+    }
+    $('btnClima').disabled = false; $('estadoClima').textContent = '';
+    const fmt = (x, d = 1) => x == null ? '—' : x.toLocaleString(LANG === 'en' ? 'en-US' : 'es-AR', { minimumFractionDigits: d, maximumFractionDigits: d });
+    $('tablaClima').innerHTML = filas.map(f => `<tr class="${f.nuevo ? 'nuevo' : ''}"><td>${f.nuevo ? '➡️ ' : ''}${f.nombre}</td>
+        <td class="text-end">${fmt(f.v && f.v.tmed)}</td><td class="text-end">${fmt(f.v && f.v.lluvia, 0)}</td>
+        <td class="text-end">${fmt(f.v && f.v.pulsos, 0)}</td><td class="small text-muted">${f.v ? f.v.fuente : '—'}</td></tr>`).join('');
+    const nuevo = filas[0].v, ref = filas.slice(1).map(f => f.v).filter(Boolean);
+    $('fuenteClima').textContent = tr(`ERA5-Land/ERA5 (Open-Meteo), 1/02 al ${nuevo ? nuevo.hasta.slice(8, 10) + '/' + nuevo.hasta.slice(5, 7) : '30/04'} de ${anio}. Una campaña describe ese año, no el clima típico del lugar.`,
+                                      `ERA5-Land/ERA5 (Open-Meteo), Feb 1 to ${nuevo ? nuevo.hasta : 'Apr 30'} ${anio}. One season describes that year, not the typical climate of the place.`);
+    let veredicto;
+    if (!nuevo) veredicto = `<div class="alert alert-warning py-2 mb-0">${tr('Open-Meteo no devolvió datos para el punto en esa campaña.', 'Open-Meteo returned no data for the point in that season.')}</div>`;
+    else {
+        const fuera = [['tmed', tr('temperatura', 'temperature')], ['lluvia', tr('lluvia', 'rain')], ['pulsos', tr('pulsos de lluvia', 'rain pulses')]]
+            .filter(([k]) => { const xs = ref.map(r => r[k]), lo = Math.min(...xs), hi = Math.max(...xs), m = (hi - lo) * .1; return nuevo[k] < lo - m || nuevo[k] > hi + m; })
+            .map(([, t]) => t);
+        veredicto = fuera.length
+            ? `<div class="alert alert-warning py-2 mb-0">${tr(`En ${anio}, fuera del rango de los sitios calibrados en: ${fuera.join(', ')}. Si se repite en otras campañas, la alerta sería una extrapolación.`, `In ${anio}, outside the range of the calibrated sites in: ${fuera.join(', ')}. If repeated in other seasons, the alert would be an extrapolation.`)}</div>`
+            : `<div class="alert alert-success py-2 mb-0">${tr(`En ${anio}, el clima de febrero a abril quedó dentro del rango de los sitios calibrados.`, `In ${anio}, February–April climate was within the range of the calibrated sites.`)}</div>`;
+    }
+    $('veredicto').innerHTML = veredicto;
+    $('resultadoClima').hidden = false;
+    $('resultadoClima').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+// ------------------------------------------------------------------ inicio
+let inicial = new URLSearchParams(location.search).get('lang');
+if (!inicial) { try { inicial = localStorage.getItem('predweem-lang'); } catch (e) { inicial = null; } }
+if (inicial === 'en') setLang('en'); else actualizarPunto(false);
+</script>
+</body>
+</html>
