@@ -4,9 +4,12 @@ const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
 
 export const cfg = window.PREDWEEM_ACCESO || { activo: false };
 
+// Modo de prueba: ingreso.html?prueba=1 usa Firebase aunque el ingreso no esté activo (el resto de la web no lo exige).
+export const enPrueba = /ingreso\.html$/.test(location.pathname) && new URLSearchParams(location.search).has("prueba");
+
 export function configurado() {
   const f = cfg.firebase || {};
-  return Boolean(cfg.activo && f.apiKey && f.authDomain && f.projectId);
+  return Boolean((cfg.activo || enPrueba) && f.apiKey && f.authDomain && f.projectId);
 }
 
 let _auth = null;

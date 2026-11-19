@@ -182,13 +182,23 @@
   </main>
 
   <script type="module">
-    import { cfg, configurado, usuarioActual, ingresarCon, ingresarConEmail, recuperarClave, destino, mensajeError, conectar } from "./acceso.js";
+    import { cfg, configurado, enPrueba, usuarioActual, ingresarCon, ingresarConEmail, recuperarClave, destino, mensajeError, conectar, salir } from "./acceso.js";
 
     const $ = (id) => document.getElementById(id);
     const msg = $("mensaje");
     const mostrar = (texto, tipo = "error") => { msg.textContent = texto; msg.className = "mensaje " + tipo; };
     const limpiar = () => { msg.textContent = ""; msg.className = "mensaje"; };
-    const ir = () => location.replace(destino());
+    // en modo de prueba no se sale de la página: se muestra con qué cuenta se ingresó
+    const ir = async () => {
+      if (!enPrueba) { location.replace(destino()); return; }
+      const u = await usuarioActual();
+      mostrar(`Prueba correcta: ingresaste como ${u && (u.email || u.displayName)} (${u && u.providerData.map((p) => p.providerId).join(", ")}). `
+        + "Con el ingreso activo, ahora irías a la página principal.", "ok");
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "boton"; b.textContent = "Cerrar sesión de prueba";
+      b.addEventListener("click", async () => { await salir(); location.reload(); });
+      msg.after(b);
+    };
 
     // botones y textos según la configuración
     const prov = cfg.proveedores || ["microsoft", "google", "email"];
@@ -219,7 +229,7 @@
       try {
         const { auth, m } = await conectar();
         await m.getRedirectResult(auth).catch((e) => mostrar(mensajeError(e)));
-        if (await usuarioActual()) ir();
+        if (await usuarioActual()) await ir();
       } catch (e) {
         mostrar("No se pudo conectar con el servicio de ingreso. Probá de nuevo en unos minutos.");
       }
@@ -227,7 +237,7 @@
 
       document.querySelectorAll("[data-proveedor]").forEach((b) => b.addEventListener("click", async () => {
         limpiar(); ocupado(true);
-        try { if (await ingresarCon(b.dataset.proveedor)) ir(); }
+        try { if (await ingresarCon(b.dataset.proveedor)) await ir(); }
         catch (e) { mostrar(mensajeError(e)); }
         finally { ocupado(false); }
       }));
@@ -237,7 +247,7 @@
         const email = $("email").value, clave = $("clave").value;
         if (!email || !clave) { mostrar("Completá el email y la contraseña."); return; }
         ocupado(true);
-        try { await ingresarConEmail(email, clave); ir(); }
+        try { await ingresarConEmail(email, clave); await ir(); }
         catch (e) { mostrar(mensajeError(e)); }
         finally { ocupado(false); }
       });
