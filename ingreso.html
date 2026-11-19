@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ingresar · PREDWEEM</title>
+  <link rel="icon" href="icono_16x16.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="acceso-config.js"></script>
+  <style>
+    :root {
+      --verde: #1a5f3f;
+      --verde-oscuro: #0f3d28;
+      --azul-logo: #1d3b5c;
+      --tinta: #1f2937;
+      --tinta-suave: #5b6472;
+      --borde: #dfe5e2;
+      --fondo: #f6f8f7;
+      --error: #b42318;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      color: var(--tinta);
+      background: var(--fondo);
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(380px, 1fr);
+      min-height: 100vh;
+    }
+
+    /* ---- imagen del sistema ---- */
+    .escena {
+      position: relative;
+      background: var(--verde-oscuro) url("ingreso-campo.jpg") center / cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+      padding: 3rem;
+      color: #fff;
+      overflow: hidden;
+    }
+    .escena::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(15, 61, 40, 0) 35%, rgba(15, 61, 40, .55) 62%, rgba(10, 40, 26, .92) 100%);
+    }
+    .escena-texto { position: relative; max-width: 560px; }
+    .etiqueta {
+      display: inline-block;
+      font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+      background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .28);
+      padding: .3rem .7rem; border-radius: 999px; margin-bottom: 1rem;
+    }
+    .escena h2 { font-size: clamp(1.6rem, 2.4vw, 2.3rem); line-height: 1.2; margin: 0 0 .8rem; font-weight: 700; }
+    .escena p { margin: 0 0 1.6rem; color: rgba(255, 255, 255, .86); font-size: 1.02rem; line-height: 1.55; }
+    .cifras { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .cifras div { display: flex; flex-direction: column; }
+    .cifras b { font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
+    .cifras span { font-size: .82rem; color: rgba(255, 255, 255, .78); }
+
+    /* ---- panel de ingreso ---- */
+    .panel {
+      display: flex; align-items: center; justify-content: center;
+      padding: 2.5rem 2rem;
+      background: #fff;
+    }
+    .caja { width: 100%; max-width: 400px; }
+    .logo { width: 100%; max-width: 300px; height: auto; display: block; margin: 0 0 2rem; }
+    h1 { font-size: 1.55rem; margin: 0 0 .35rem; font-weight: 700; color: var(--tinta); }
+    .bajada { margin: 0 0 1.6rem; color: var(--tinta-suave); font-size: .95rem; line-height: 1.5; }
+
+    .boton {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: .7rem;
+      font: 600 .95rem 'Inter', system-ui, sans-serif;
+      padding: .8rem 1rem; border-radius: 10px; cursor: pointer;
+      border: 1px solid var(--borde); background: #fff; color: var(--tinta);
+      transition: background .15s, border-color .15s, box-shadow .15s;
+      margin-bottom: .7rem; text-decoration: none;
+    }
+    .boton:hover:not(:disabled) { background: #f3f6f5; border-color: #c7d2cd; }
+    .boton:focus-visible { outline: 3px solid rgba(26, 95, 63, .35); outline-offset: 2px; }
+    .boton.principal { background: var(--verde); border-color: var(--verde); color: #fff; }
+    .boton.principal:hover:not(:disabled) { background: var(--verde-oscuro); border-color: var(--verde-oscuro); }
+    .boton:disabled { opacity: .5; cursor: not-allowed; }
+    .boton svg { width: 20px; height: 20px; flex: none; }
+
+    .separador { display: flex; align-items: center; gap: .8rem; margin: 1.1rem 0; color: var(--tinta-suave); font-size: .82rem; }
+    .separador::before, .separador::after { content: ""; flex: 1; height: 1px; background: var(--borde); }
+
+    label { display: block; font-size: .85rem; font-weight: 600; margin: 0 0 .35rem; }
+    input {
+      width: 100%; font: 400 .95rem 'Inter', system-ui, sans-serif;
+      padding: .72rem .85rem; border-radius: 10px; border: 1px solid var(--borde); background: #fbfcfc;
+      margin-bottom: .9rem; color: var(--tinta);
+    }
+    input:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(26, 95, 63, .15); background: #fff; }
+    .fila { display: flex; justify-content: flex-end; margin: -.4rem 0 1rem; }
+    .enlace { background: none; border: 0; padding: 0; color: var(--verde); font: 500 .85rem 'Inter', sans-serif; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+    .enlace:disabled { color: var(--tinta-suave); cursor: not-allowed; }
+
+    .mensaje { display: none; font-size: .88rem; line-height: 1.45; border-radius: 10px; padding: .7rem .85rem; margin: 0 0 1rem; }
+    .mensaje.error { display: block; background: #fef3f2; color: var(--error); border: 1px solid #fecdca; }
+    .mensaje.ok { display: block; background: #ecfdf3; color: #067647; border: 1px solid #abefc6; }
+    .aviso-demo {
+      background: #fffaeb; border: 1px solid #fedf89; color: #93370d;
+      border-radius: 10px; padding: .8rem .9rem; font-size: .88rem; line-height: 1.45; margin-bottom: 1.1rem;
+    }
+    .pie { margin-top: 1.6rem; font-size: .78rem; color: var(--tinta-suave); line-height: 1.5; }
+    .pie a { color: var(--verde); }
+    .oculto { display: none !important; }
+
+    @media (max-width: 860px) {
+      body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .escena { min-height: 320px; padding: 1.6rem 1rem; }
+      .escena::before { background: linear-gradient(180deg, rgba(15, 61, 40, .15) 0%, rgba(15, 61, 40, .7) 45%, rgba(10, 40, 26, .94) 100%); }
+      .etiqueta { font-size: .68rem; }
+      .escena h2 { font-size: 1.35rem; }
+      .escena p { display: none; }
+      .cifras { gap: 1rem; flex-wrap: nowrap; }
+      .cifras span { font-size: .74rem; }
+      .cifras b { font-size: 1.2rem; }
+      .panel { padding: 2rem 1rem 2.5rem; }
+      .logo { max-width: 240px; margin-bottom: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <section class="escena" aria-label="Monitoreo de emergencia de raigrás a campo">
+    <div class="escena-texto">
+      <span class="etiqueta">Raigrás anual · <i>Lolium multiflorum</i></span>
+      <h2>Alerta de grandes flujos de emergencia, a 7 días</h2>
+      <p>Clima diario, tiempo térmico y conteos a campo para decidir cuándo recorrer, cuándo aplicar el graminicida de
+        barbecho y si hace falta un residual a la siembra.</p>
+      <div class="cifras">
+        <div><b>8</b><span>localidades con app</span></div>
+        <div><b>40</b><span>campañas evaluadas</span></div>
+        <div><b>92&nbsp;%</b><span>flujos anticipados</span></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="panel">
+    <div class="caja">
+      <img src="logo-ingreso.png" alt="PREDWEEM by Guillermo R. Chantre" class="logo">
+      <h1>Ingresar</h1>
+      <p class="bajada">Predicción de emergencia de raigrás para el sudoeste y el norte de Buenos Aires.</p>
+
+      <div id="aviso-demo" class="aviso-demo oculto">
+        El ingreso con usuario todavía no está activado. Por ahora podés entrar directamente.
+      </div>
+      <a id="continuar" class="boton principal oculto" href="./">Continuar a PREDWEEM</a>
+
+      <div id="mensaje" class="mensaje" role="alert" aria-live="polite"></div>
+
+      <div id="proveedores">
+        <button type="button" class="boton" data-proveedor="microsoft">
+          <svg viewBox="0 0 21 21" aria-hidden="true"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+          <span>Cuenta de la empresa (Microsoft)</span>
+        </button>
+        <button type="button" class="boton" data-proveedor="google">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+          <span>Cuenta de Google</span>
+        </button>
+      </div>
+
+      <form id="form-email" novalidate>
+        <div class="separador" id="sep-email">o con email y contraseña</div>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" inputmode="email" required>
+        <label for="clave">Contraseña</label>
+        <input id="clave" type="password" autocomplete="current-password" required>
+        <div class="fila"><button type="button" class="enlace" id="olvide">¿Olvidaste tu contraseña?</button></div>
+        <button type="submit" class="boton principal" id="entrar">Ingresar</button>
+      </form>
+
+      <p class="pie">
+        <span id="pie-contacto">Para pedir acceso, escribí al administrador de PREDWEEM.</span><br>
+        PREDWEEM es una herramienta de apoyo a la toma de decisiones; no reemplaza el monitoreo a campo ni el
+        diagnóstico profesional.
+      </p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { cfg, configurado, usuarioActual, ingresarCon, ingresarConEmail, recuperarClave, destino, mensajeError, conectar } from "./acceso.js";
+
+    const $ = (id) => document.getElementById(id);
+    const msg = $("mensaje");
+    const mostrar = (texto, tipo = "error") => { msg.textContent = texto; msg.className = "mensaje " + tipo; };
+    const limpiar = () => { msg.textContent = ""; msg.className = "mensaje"; };
+    const ir = () => location.replace(destino());
+
+    // botones y textos según la configuración
+    const prov = cfg.proveedores || ["microsoft", "google", "email"];
+    document.querySelectorAll("[data-proveedor]").forEach((b) => {
+      const id = b.dataset.proveedor;
+      if (!prov.includes(id)) b.classList.add("oculto");
+      if (cfg.textos && cfg.textos[id]) b.querySelector("span").textContent = cfg.textos[id];
+    });
+    if (!prov.includes("email")) $("form-email").classList.add("oculto");
+    if (!prov.some((p) => p !== "email")) $("sep-email").classList.add("oculto");
+    if (cfg.contacto) {
+      const a = document.createElement("a");
+      a.href = "mailto:" + cfg.contacto; a.textContent = cfg.contacto;
+      $("pie-contacto").replaceChildren("Para pedir acceso, escribí a ", a, ".");
+    }
+    $("continuar").href = destino();
+
+    const controles = () => document.querySelectorAll("#proveedores button, #form-email input, #form-email button");
+    const ocupado = (si) => controles().forEach((c) => { c.disabled = si; });
+
+    if (!configurado()) {
+      // ingreso todavía sin activar: se ve la pantalla, pero se entra con «Continuar»
+      $("aviso-demo").classList.remove("oculto");
+      $("continuar").classList.remove("oculto");
+      ocupado(true);
+    } else {
+      ocupado(true);
+      try {
+        const { auth, m } = await conectar();
+        await m.getRedirectResult(auth).catch((e) => mostrar(mensajeError(e)));
+        if (await usuarioActual()) ir();
+      } catch (e) {
+        mostrar("No se pudo conectar con el servicio de ingreso. Probá de nuevo en unos minutos.");
+      }
+      ocupado(false);
+
+      document.querySelectorAll("[data-proveedor]").forEach((b) => b.addEventListener("click", async () => {
+        limpiar(); ocupado(true);
+        try { if (await ingresarCon(b.dataset.proveedor)) ir(); }
+        catch (e) { mostrar(mensajeError(e)); }
+        finally { ocupado(false); }
+      }));
+
+      $("form-email").addEventListener("submit", async (ev) => {
+        ev.preventDefault(); limpiar();
+        const email = $("email").value, clave = $("clave").value;
+        if (!email || !clave) { mostrar("Completá el email y la contraseña."); return; }
+        ocupado(true);
+        try { await ingresarConEmail(email, clave); ir(); }
+        catch (e) { mostrar(mensajeError(e)); }
+        finally { ocupado(false); }
+      });
+
+      $("olvide").addEventListener("click", async () => {
+        limpiar();
+        const email = $("email").value.trim();
+        if (!email) { mostrar("Escribí tu email arriba y volvé a tocar «¿Olvidaste tu contraseña?»."); $("email").focus(); return; }
+        try {
+          await recuperarClave(email);
+          mostrar("Si el email está registrado, te llega un mensaje para crear una contraseña nueva.", "ok");
+        } catch (e) {
+          // misma respuesta haya o no cuenta: no revela qué emails existen
+          if (e && e.code === "auth/invalid-email") mostrar(mensajeError(e));
+          else mostrar("Si el email está registrado, te llega un mensaje para crear una contraseña nueva.", "ok");
+        }
+      });
+    }
+  </script>
+</body>
+</html>
