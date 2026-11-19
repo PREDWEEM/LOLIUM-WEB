@@ -1,7 +1,7 @@
 // Guardia de las páginas de la web: si el ingreso está activo y no hay sesión, lleva a ingreso.html y vuelve acá
 // después de ingresar. Con el ingreso inactivo (acceso-config.js) no hace nada.
 // Uso, en el <head>:  <script src="acceso-config.js"></script>  <script type="module" src="acceso-guardia.js"></script>
-import { configurado, usuarioActual, salir } from "./acceso.js?v=20261119c";
+import { configurado, usuarioActual, salir } from "./acceso.js?v=20261119d";
 
 if (configurado()) {
   const raiz = document.documentElement;
