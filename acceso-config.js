@@ -17,7 +17,7 @@
 // Esta configuración es pública por diseño (la de Firebase no es un secreto). La protección de las apps sigue estando
 // en cada app; esta página ordena el ingreso a la web.
 window.PREDWEEM_ACCESO = {
-  activo: false,
+  activo: true,
   firebase: {
     apiKey: "AIzaSyDYSHnN-eRPtifZBlamYM3Xg8Nsc3oCASc",
     authDomain: "predweem-2db5d.firebaseapp.com",
