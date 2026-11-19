@@ -32,5 +32,5 @@ window.PREDWEEM_ACCESO = {
   },
   microsoftInquilino: "",            // id de inquilino de Microsoft Entra de la empresa ("" = cualquier cuenta Microsoft)
   destino: "./",                     // a dónde se va después de ingresar (la página principal)
-  contacto: "",                      // email para pedir acceso (se muestra al pie)
+  contacto: "chantreguillermo@gmail.com",  // email para pedir acceso (se muestra al pie)
 };
