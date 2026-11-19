@@ -25,7 +25,7 @@ window.PREDWEEM_ACCESO = {
     appId: "1:473154946301:web:ab4ea38562d08ba6976a94",
   },
   // Botones, en este orden: "microsoft", "google", "email" (Microsoft se agrega cuando la empresa registre la app)
-  proveedores: ["google", "email"],
+  proveedores: ["email"],
   textos: {
     microsoft: "Cuenta de la empresa (Microsoft)",
     google: "Cuenta de Google",
