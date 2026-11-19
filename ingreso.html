@@ -6,7 +6,7 @@
   <title>Ingresar · PREDWEEM</title>
   <link rel="icon" href="icono_16x16.ico">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="acceso-config.js"></script>
+  <script src="acceso-config.js?v=20261119c"></script>
   <style>
     :root {
       --verde: #1a5f3f;
@@ -151,6 +151,8 @@
       <a id="continuar" class="boton principal oculto" href="./">Continuar a PREDWEEM</a>
 
       <div id="mensaje" class="mensaje" role="alert" aria-live="polite"></div>
+      <div id="sin-cargar" class="mensaje error" style="display:none">La página no terminó de cargar. Recargala con
+        <b>Ctrl + Shift + R</b> (en el celular, cerrá y volvé a abrir la pestaña).</div>
 
       <div id="proveedores">
         <button type="button" class="boton" data-proveedor="microsoft">
@@ -163,7 +165,7 @@
         </button>
       </div>
 
-      <form id="form-email" novalidate>
+      <form id="form-email" novalidate onsubmit="return false">
         <div class="separador" id="sep-email">o con email y contraseña</div>
         <label for="email">Email</label>
         <input id="email" type="email" autocomplete="username" inputmode="email" required>
@@ -182,8 +184,9 @@
   </main>
 
   <script type="module">
-    import { cfg, configurado, enPrueba, usuarioActual, ingresarCon, ingresarConEmail, recuperarClave, destino, mensajeError, conectar, salir } from "./acceso.js";
+    import { cfg, configurado, enPrueba, usuarioActual, ingresarCon, ingresarConEmail, recuperarClave, destino, mensajeError, conectar, salir } from "./acceso.js?v=20261119c";
 
+    window.__predweemIngreso = true;
     const $ = (id) => document.getElementById(id);
     const msg = $("mensaje");
     const mostrar = (texto, tipo = "error") => { msg.textContent = texto; msg.className = "mensaje " + tipo; };
@@ -266,6 +269,12 @@
         }
       });
     }
+  </script>
+  <script>
+    // si el código del ingreso no corrió (archivo viejo en caché, sin conexión), avisar en lugar de quedar mudo
+    setTimeout(function () {
+      if (!window.__predweemIngreso) document.getElementById("sin-cargar").style.display = "block";
+    }, 5000);
   </script>
 </body>
 </html>
