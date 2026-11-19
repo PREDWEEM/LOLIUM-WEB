@@ -9,20 +9,21 @@
 //      Firebase (https://<proyecto>.firebaseapp.com/__/auth/handler) y poner el id de inquilino en `microsoftInquilino`.
 //   4. Usuarios con email y contraseña: crearlos en Firebase → Authentication → Users (la página no permite registrarse
 //      sola; la recuperación de contraseña la manda Firebase por email).
-//   5. Poner `activo: true`.
+//   5. Probar en ingreso.html?prueba=1 (usa Firebase aunque `activo` sea false y no redirige: muestra con qué cuenta
+//      se ingresó). Si anda, poner `activo: true`.
 //
 // Esta configuración es pública por diseño (la de Firebase no es un secreto). La protección de las apps sigue estando
 // en cada app; esta página ordena el ingreso a la web.
 window.PREDWEEM_ACCESO = {
   activo: false,
   firebase: {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    appId: "",
+    apiKey: "AIzaSyDYSHnN-eRPtifZBlamYM3Xg8Nsc3oCASc",
+    authDomain: "predweem-2db5d.firebaseapp.com",
+    projectId: "predweem-2db5d",
+    appId: "1:473154946301:web:ab4ea38562d08ba6976a94",
   },
-  // Botones, en este orden: "microsoft", "google", "email"
-  proveedores: ["microsoft", "google", "email"],
+  // Botones, en este orden: "microsoft", "google", "email" (Microsoft se agrega cuando la empresa registre la app)
+  proveedores: ["google", "email"],
   textos: {
     microsoft: "Cuenta de la empresa (Microsoft)",
     google: "Cuenta de Google",
