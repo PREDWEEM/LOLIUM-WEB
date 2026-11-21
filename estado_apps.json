@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-20T16:59:31+00:00",
+  "generado": "2026-11-21T01:32:19+00:00",
   "fecha_esperada": "2026-10-01",
   "apps": {
     "Bordenave": {
@@ -7,9 +7,9 @@
       "app_responde": true,
       "ultima_fecha": "2026-10-01",
       "dias": 274,
-      "pct_observado": 66,
+      "pct_observado": 97,
       "fuente": "estación SIGA–INTA",
-      "estado": "estimada"
+      "estado": "ok"
     },
     "Tres Arroyos": {
       "repo": "PREDWEEM/loliumTA_2026",
