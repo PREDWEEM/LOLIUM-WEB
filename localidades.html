@@ -29,7 +29,8 @@
         tr.nuevo td { font-weight: 600; background: #fef2f2; }
         .aviso { font-size: .9rem; }
         #lang-switch { position: absolute; top: 1rem; right: 1rem; }
-    </style>
+        table.clima th.grupo { border-bottom: 2px solid #1a5f3f; color: #1a5f3f; }
+</style>
 </head>
 <body>
 <div class="container py-4 position-relative">
@@ -88,12 +89,11 @@
     </div>
 
     <div class="tarjeta p-4 mt-4" id="resultadoClima" hidden>
-        <h2 class="h5 fw-semibold" data-t="tTabla">Clima de febrero a abril</h2>
+        <h2 class="h5 fw-semibold" data-t="tTabla">Clima de enero a abril</h2>
         <p class="small text-muted" id="fuenteClima"></p>
-        <div class="table-responsive"><table class="table table-sm clima mb-2"><thead><tr>
-            <th data-t="lugar">Lugar</th><th class="text-end" data-t="tmed">Temp. media (°C)</th><th class="text-end" data-t="lluvia">Lluvia (mm)</th>
-            <th class="text-end" data-t="pulsos">Días con ≥ 20 mm en 5 días</th><th data-t="fuente">Fuente</th></tr></thead><tbody id="tablaClima"></tbody></table></div>
+        <div class="table-responsive"><table class="table table-sm clima mb-2"><thead id="cabezaClima"></thead><tbody id="tablaClima"></tbody></table></div>
         <div id="veredicto" class="aviso"></div>
+        <p class="small text-muted mt-2 mb-0" id="notaAnio"></p>
     </div>
 
     <div class="tarjeta p-4 mt-4">
@@ -136,7 +136,7 @@ const EN = {
     lat: 'Latitude', lon: 'Longitude', sinPunto: 'Double-click on the map to choose a point.', tClima: '2. Climate comparison', campania: 'Season',
     revisar: 'Check climate', tAlerta: '3. Alert at this point', verAlerta: '<i class="bi bi-bell-fill me-1"></i>Open the alert at this point',
     tSugerir: '4. Suggest the location', sugerirTxt: 'If you want this point to become a location of the website, suggest it: we will review it and, if there are seedling counts, validate it.',
-    correo: 'Email', tTabla: 'February–April climate', lugar: 'Place', tmed: 'Mean temp. (°C)', lluvia: 'Rain (mm)', pulsos: 'Days with ≥ 20 mm in 5 days', fuente: 'Source',
+    correo: 'Email', tTabla: 'January–April climate',
     tFiab: 'How reliable is it at another location?',
     fiab: '<li><b>Weekly large-flush alert:</b> reliable for ranking weeks by risk within the calibrated region (AUC 0.89–0.93 at sites not used for calibration), especially when the first-seedling date is entered.</li><li><b>Emergence onset:</b> cannot be anticipated (11–12 days error); fields must be scouted.</li><li><b>Cumulative curve and residual:</b> indicative only; residual plants/m² depend on the field infestation.</li><li><b>Outside the climate range of the calibrated sites</b> or far from them, the alert is an extrapolation. Weather is reanalysis (ERA5-Land/ERA5) and ECMWF forecast, not weather-station data.</li>'
 };
@@ -246,11 +246,21 @@ async function dias(lat, lon, ini, fin, modelo) {
         .map(([f, v]) => ({ f, tmax: Math.max(...v.map(x => x[0])), tmin: Math.min(...v.map(x => x[0])), p: v.reduce((s, x) => s + x[1], 0) }));
 }
 
-async function febAbr(lat, lon, anio) {
-    const clave = `predweem-om-${lat.toFixed(3)}-${lon.toFixed(3)}-${anio}`;
-    try { const c = JSON.parse(localStorage.getItem(clave)); if (c && (anio < hoy.getFullYear() || Date.now() - c.t < 864e5)) return c.v; } catch (e) { /* */ }
-    const ini = `${anio}-01-27`, ayer = new Date(Date.now() - 864e5), fin = ISO(new Date(Math.min(new Date(`${anio}-04-30T12:00:00`), ayer)));
-    if (fin < `${anio}-02-01`) return null;
+// clima típico: promedio de las campañas 2011–2025 completas (enero a abril)
+const TIP_DESDE = 2011, TIP_HASTA = 2025;
+
+// resumen de enero a abril de una campaña a partir de los días desde el 28/12 anterior (los pulsos del 1/01 suman diciembre)
+function resumir(ds, anio) {
+    const desde = ds.findIndex(x => x.f >= `${anio}-01-01`);
+    if (desde < 0) return null;
+    const sel = ds.slice(desde), p = ds.map(x => x.p);
+    let pulsos = 0;
+    for (let i = desde; i < ds.length; i++) if (i >= 4 && p.slice(i - 4, i + 1).reduce((a, b) => a + b, 0) >= 20) pulsos++;
+    return { tmed: sel.reduce((s, x) => s + (x.tmax + x.tmin) / 2, 0) / sel.length, lluvia: sel.reduce((s, x) => s + x.p, 0), pulsos, n: sel.length, hasta: sel[sel.length - 1].f };
+}
+
+// días de reanálisis entre ini y fin: ERA5-Land y, si no cubre el período, ERA5
+async function reanalisis(lat, lon, ini, fin) {
     const n = Math.round((new Date(fin) - new Date(ini)) / 864e5) + 1;
     let mejor = null, fuente = null;
     for (const m of ['era5_land', 'era5']) {
@@ -258,15 +268,51 @@ async function febAbr(lat, lon, anio) {
         if (!mejor || ds.length > mejor.length) { mejor = ds; fuente = m.toUpperCase().replace('_', '-'); }
         if (ds.length >= Math.max(1, n - 12)) break;
     }
-    if (!mejor || !mejor.length) return null;
-    const p = mejor.map(x => x.p);
-    const desde = mejor.findIndex(x => x.f >= `${anio}-02-01`);
-    const sel = mejor.slice(desde);
-    let pulsos = 0;
-    for (let i = desde; i < mejor.length; i++) if (i >= 4 && p.slice(i - 4, i + 1).reduce((a, b) => a + b, 0) >= 20) pulsos++;
-    const v = { tmed: sel.reduce((s, x) => s + (x.tmax + x.tmin) / 2, 0) / sel.length, lluvia: sel.reduce((s, x) => s + x.p, 0), pulsos, fuente, hasta: sel[sel.length - 1].f };
+    return { ds: mejor || [], fuente };
+}
+
+async function eneAbr(lat, lon, anio) {
+    const clave = `predweem-om2-${lat.toFixed(3)}-${lon.toFixed(3)}-${anio}`;
+    try { const c = JSON.parse(localStorage.getItem(clave)); if (c && (anio < hoy.getFullYear() || Date.now() - c.t < 864e5)) return c.v; } catch (e) { /* */ }
+    const ini = `${anio - 1}-12-28`, ayer = new Date(Date.now() - 864e5), fin = ISO(new Date(Math.min(new Date(`${anio}-04-30T12:00:00`), ayer)));
+    if (fin < `${anio}-01-01`) return null;
+    const { ds, fuente } = await reanalisis(lat, lon, ini, fin);
+    const r = ds.length ? resumir(ds, anio) : null;
+    if (!r) return null;
+    const v = { ...r, fuente };
     try { localStorage.setItem(clave, JSON.stringify({ t: Date.now(), v })); } catch (e) { /* */ }
     return v;
+}
+
+// clima típico de un punto: cada campaña por separado (Open-Meteo cuenta un pedido largo como muchas consultas);
+// queda guardado en el navegador porque no cambia
+async function tipico(lat, lon, avance) {
+    const clave = `predweem-tip1-${lat.toFixed(3)}-${lon.toFixed(3)}-${TIP_DESDE}-${TIP_HASTA}`;
+    try { const c = JSON.parse(localStorage.getItem(clave)); if (c) return c; } catch (e) { /* */ }
+    const anios = [];
+    for (let a = TIP_DESDE; a <= TIP_HASTA; a++) {
+        if (avance) avance(a);
+        const { ds } = await reanalisis(lat, lon, `${a - 1}-12-28`, `${a}-04-30`);
+        const r = ds.length ? resumir(ds, a) : null;
+        if (r && r.n >= 110) anios.push(r);
+        await esperar(250);
+    }
+    if (!anios.length) return null;
+    const m = k => anios.reduce((s, x) => s + x[k], 0) / anios.length;
+    const v = { tmed: m('tmed'), lluvia: m('lluvia'), pulsos: m('pulsos'), anios: anios.length };
+    try { localStorage.setItem(clave, JSON.stringify(v)); } catch (e) { /* */ }
+    return v;
+}
+
+// clima típico de los sitios calibrados, calculado una vez por el repositorio de localidades
+async function tipicoSitios() {
+    try {
+        const r = await fetch(`https://raw.githubusercontent.com/${REPO_LOCALIDADES}/main/clima/tipico_sitios.json`);
+        if (!r.ok) return {};
+        const d = await r.json();
+        if (d.desde !== TIP_DESDE || d.hasta !== TIP_HASTA) return {};
+        return Object.fromEntries(Object.entries(d.sitios || {}).map(([k, x]) => [k, { tmed: x.tmed, lluvia: x.lluvia, pulsos: x.dias_pulso, anios: x.anios }]));
+    } catch (e) { return {}; }
 }
 
 $('btnClima').addEventListener('click', async () => {
@@ -276,9 +322,13 @@ $('btnClima').addEventListener('click', async () => {
     const lugares = [{ nombre: nombre || tr('Punto elegido', 'Chosen point'), lat, lon, nuevo: true }, ...SITIOS];
     const filas = [];
     try {
+        $('estadoClima').textContent = tr('Leyendo el clima típico de los sitios calibrados…', 'Reading the typical climate of the calibrated sites…');
+        const guardados = await tipicoSitios();
         for (const [i, l] of lugares.entries()) {
-            $('estadoClima').textContent = tr(`Bajando febrero a abril de ${anio}… (${i + 1}/${lugares.length})`, `Downloading February–April ${anio}… (${i + 1}/${lugares.length})`);
-            filas.push({ ...l, v: await febAbr(l.lat, l.lon, anio) });
+            const t = (!l.nuevo && guardados[l.nombre]) || await tipico(l.lat, l.lon, a => {
+                $('estadoClima').textContent = tr(`Clima típico de ${l.nombre}: campaña ${a}…`, `Typical climate of ${l.nombre}: season ${a}…`); });
+            $('estadoClima').textContent = tr(`Bajando enero a abril de ${anio}… (${i + 1}/${lugares.length})`, `Downloading January–April ${anio}… (${i + 1}/${lugares.length})`);
+            filas.push({ ...l, t, v: await eneAbr(l.lat, l.lon, anio) });
         }
     } catch (e) {
         $('estadoClima').textContent = tr('No se pudo bajar el clima: ', 'Could not download the climate: ') + e.message;
@@ -286,23 +336,32 @@ $('btnClima').addEventListener('click', async () => {
     }
     $('btnClima').disabled = false; $('estadoClima').textContent = '';
     const fmt = (x, d = 1) => x == null ? '—' : x.toLocaleString(LANG === 'en' ? 'en-US' : 'es-AR', { minimumFractionDigits: d, maximumFractionDigits: d });
+    const tip = tr('Típico', 'Typical');
+    $('cabezaClima').innerHTML = `<tr><th></th><th class="text-center grupo" colspan="3">${tip} ${TIP_DESDE}–${TIP_HASTA}</th><th class="text-center grupo" colspan="3">${anio}</th></tr>
+        <tr><th>${tr('Lugar', 'Place')}</th>` + [0, 1].map(() => `<th class="text-end">${tr('Temp. media (°C)', 'Mean temp. (°C)')}</th>
+        <th class="text-end">${tr('Lluvia (mm)', 'Rain (mm)')}</th><th class="text-end">${tr('Días de pulso', 'Pulse days')}</th>`).join('') + '</tr>';
     $('tablaClima').innerHTML = filas.map(f => `<tr class="${f.nuevo ? 'nuevo' : ''}"><td>${f.nuevo ? '➡️ ' : ''}${f.nombre}</td>
-        <td class="text-end">${fmt(f.v && f.v.tmed)}</td><td class="text-end">${fmt(f.v && f.v.lluvia, 0)}</td>
-        <td class="text-end">${fmt(f.v && f.v.pulsos, 0)}</td><td class="small text-muted">${f.v ? f.v.fuente : '—'}</td></tr>`).join('');
-    const nuevo = filas[0].v, ref = filas.slice(1).map(f => f.v).filter(Boolean);
-    $('fuenteClima').textContent = tr(`ERA5-Land/ERA5 (Open-Meteo), 1/02 al ${nuevo ? nuevo.hasta.slice(8, 10) + '/' + nuevo.hasta.slice(5, 7) : '30/04'} de ${anio}. Una campaña describe ese año, no el clima típico del lugar.`,
-                                      `ERA5-Land/ERA5 (Open-Meteo), Feb 1 to ${nuevo ? nuevo.hasta : 'Apr 30'} ${anio}. One season describes that year, not the typical climate of the place.`);
+        <td class="text-end">${fmt(f.t && f.t.tmed)}</td><td class="text-end">${fmt(f.t && f.t.lluvia, 0)}</td><td class="text-end">${fmt(f.t && f.t.pulsos, 0)}</td>
+        <td class="text-end">${fmt(f.v && f.v.tmed)}</td><td class="text-end">${fmt(f.v && f.v.lluvia, 0)}</td><td class="text-end">${fmt(f.v && f.v.pulsos, 0)}</td></tr>`).join('');
+    const nuevo = filas[0], refT = filas.slice(1).map(f => f.t).filter(Boolean), refV = filas.slice(1).map(f => f.v).filter(Boolean);
+    const hasta = nuevo.v ? nuevo.v.hasta.slice(8, 10) + '/' + nuevo.v.hasta.slice(5, 7) : '30/04';
+    $('fuenteClima').textContent = tr(`ERA5-Land/ERA5 (Open-Meteo), 1/01 al 30/04. Típico: promedio de las campañas ${TIP_DESDE}–${TIP_HASTA}, describe el lugar; ${anio} (hasta el ${hasta}) describe ese año. Días de pulso: días en que la lluvia de los 5 días previos suma 20 mm o más.`,
+                                      `ERA5-Land/ERA5 (Open-Meteo), Jan 1 to Apr 30. Typical: mean of the ${TIP_DESDE}–${TIP_HASTA} seasons, describes the place; ${anio} (to ${hasta}) describes that year. Pulse days: days when the rain of the previous 5 days adds up to 20 mm or more.`);
+    const VARS = [['tmed', tr('temperatura', 'temperature')], ['lluvia', tr('lluvia', 'rain')], ['pulsos', tr('pulsos de lluvia', 'rain pulses')]];
+    const fueraDe = (x, ref) => VARS.filter(([k]) => { const xs = ref.map(r => r[k]), lo = Math.min(...xs), hi = Math.max(...xs), m = (hi - lo) * .1; return x[k] < lo - m || x[k] > hi + m; }).map(([, t]) => t);
     let veredicto;
-    if (!nuevo) veredicto = `<div class="alert alert-warning py-2 mb-0">${tr('Open-Meteo no devolvió datos para el punto en esa campaña.', 'Open-Meteo returned no data for the point in that season.')}</div>`;
+    if (!nuevo.t) veredicto = `<div class="alert alert-warning py-2 mb-0">${tr('Open-Meteo no devolvió el clima típico del punto. Probá de nuevo en unos minutos.', 'Open-Meteo returned no typical climate for the point. Try again in a few minutes.')}</div>`;
     else {
-        const fuera = [['tmed', tr('temperatura', 'temperature')], ['lluvia', tr('lluvia', 'rain')], ['pulsos', tr('pulsos de lluvia', 'rain pulses')]]
-            .filter(([k]) => { const xs = ref.map(r => r[k]), lo = Math.min(...xs), hi = Math.max(...xs), m = (hi - lo) * .1; return nuevo[k] < lo - m || nuevo[k] > hi + m; })
-            .map(([, t]) => t);
+        const fuera = fueraDe(nuevo.t, refT);
         veredicto = fuera.length
-            ? `<div class="alert alert-warning py-2 mb-0">${tr(`En ${anio}, fuera del rango de los sitios calibrados en: ${fuera.join(', ')}. Si se repite en otras campañas, la alerta sería una extrapolación.`, `In ${anio}, outside the range of the calibrated sites in: ${fuera.join(', ')}. If repeated in other seasons, the alert would be an extrapolation.`)}</div>`
-            : `<div class="alert alert-success py-2 mb-0">${tr(`En ${anio}, el clima de febrero a abril quedó dentro del rango de los sitios calibrados.`, `In ${anio}, February–April climate was within the range of the calibrated sites.`)}</div>`;
+            ? `<div class="alert alert-warning py-2 mb-0">${tr(`Clima típico de enero a abril fuera del rango de los sitios calibrados en: ${fuera.join(', ')}. La alerta en este lugar sería una extrapolación de la calibración.`, `Typical January–April climate outside the range of the calibrated sites in: ${fuera.join(', ')}. The alert at this place would be an extrapolation of the calibration.`)}</div>`
+            : `<div class="alert alert-success py-2 mb-0">${tr('El clima típico de enero a abril está dentro del rango de los sitios calibrados.', 'The typical January–April climate is within the range of the calibrated sites.')}</div>`;
     }
     $('veredicto').innerHTML = veredicto;
+    const fueraAnio = nuevo.v && refV.length ? fueraDe(nuevo.v, refV) : null;
+    $('notaAnio').textContent = !nuevo.v ? tr(`Todavía no hay datos de enero a abril de ${anio} para este punto.`, `No January–April ${anio} data yet for this point.`)
+        : fueraAnio.length ? tr(`En ${anio}, fuera del rango de los sitios calibrados ese mismo año en: ${fueraAnio.join(', ')}.`, `In ${anio}, outside the range of the calibrated sites that same year in: ${fueraAnio.join(', ')}.`)
+        : tr(`En ${anio}, dentro del rango de los sitios calibrados ese mismo año.`, `In ${anio}, within the range of the calibrated sites that same year.`);
     $('resultadoClima').hidden = false;
     $('resultadoClima').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
